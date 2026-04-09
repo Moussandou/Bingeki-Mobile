@@ -1,14 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, Pressable, Dimensions, Platform } from 'react-native';
-import { BlurView } from 'expo-blur';
+import { View, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
-import { Button } from '../ui/Button';
 import { IconSymbol } from '../ui/icon-symbol';
 import { Colors, Spacing } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
-import { ThemedText } from '../themed-text';
 
 const { width } = Dimensions.get('window');
 
@@ -18,24 +15,13 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
   const theme = Colors[colorScheme ?? 'light'];
 
   // Filter routes to show only Dashboard, Discover, Library
-  // index -> Dashboard
-  // social -> Discover
-  // library -> Library
   const validRoutes = ['index', 'social', 'library'];
   const routes = state.routes.filter(route => validRoutes.includes(route.name));
 
   return (
-    <View style={[styles.container, { paddingBottom: insets.bottom }]}>
-      <BlurView 
-        intensity={80} 
-        tint={colorScheme === 'dark' ? 'dark' : 'light'} 
-        style={StyleSheet.absoluteFill} 
-      />
-      <View style={[styles.border, { backgroundColor: theme.border }]} />
-      
+    <View style={[styles.container, { bottom: 20 + insets.bottom / 2, backgroundColor: theme.surface }]}>
       <View style={styles.content}>
         {routes.map((route, index) => {
-          const { options } = descriptors[route.key];
           const isFocused = state.index === state.routes.findIndex(r => r.key === route.key);
 
           const onPress = () => {
@@ -53,19 +39,10 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
 
           const getIcon = () => {
             switch (route.name) {
-              case 'index': return 'squareshape.fill';
-              case 'social': return 'magnifyingglass';
+              case 'index': return 'house.fill';
+              case 'social': return 'safari';
               case 'library': return 'book.closed.fill';
               default: return 'house.fill';
-            }
-          };
-
-          const getLabel = () => {
-            switch (route.name) {
-              case 'index': return 'Q.G.';
-              case 'social': return 'DÉCOUVRIR';
-              case 'library': return 'BIBLIO';
-              default: return options.title;
             }
           };
 
@@ -73,29 +50,16 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
             <Pressable
               key={route.key}
               onPress={onPress}
-              style={styles.tabItem}
+              style={[
+                styles.tabItem,
+                isFocused && { backgroundColor: theme.primary + '20' } // Subtle background for active
+              ]}
             >
-              <Button
-                variant={isFocused ? 'primary' : 'ghost'}
-                size="icon"
-                onPress={onPress}
-                style={[
-                  styles.navButton,
-                  { borderRadius: 12 } // Anchor requirement
-                ]}
-              >
-                <IconSymbol 
-                  name={getIcon() as any} 
-                  size={24} 
-                  color={isFocused ? '#FFF' : theme.text} 
-                />
-              </Button>
-              <ThemedText style={[
-                styles.label, 
-                { color: isFocused ? theme.primary : theme.textDim }
-              ]}>
-                {getLabel()}
-              </ThemedText>
+              <IconSymbol 
+                name={getIcon() as any} 
+                size={28} 
+                color={isFocused ? theme.primary : theme.text} 
+              />
             </Pressable>
           );
         })}
@@ -107,38 +71,32 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: Platform.OS === 'ios' ? 88 : 70,
+    alignSelf: 'center',
+    width: width * 0.7,
+    height: 70,
+    borderRadius: 35,
     overflow: 'hidden',
-  },
-  border: {
-    height: 1,
-    width: '100%',
-    opacity: 0.2,
+    borderWidth: 1.5,
+    borderColor: 'rgba(255, 255, 255, 0.1)',
+    // Shadow for landing depth
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 15,
+    elevation: 10,
   },
   content: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingHorizontal: Spacing.md,
+    paddingHorizontal: 10,
   },
   tabItem: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-    flex: 1,
-    gap: 4,
-  },
-  navButton: {
-    width: 48,
-    height: 48,
-    padding: 0,
-  },
-  label: {
-    fontSize: 10,
-    fontFamily: 'Outfit_900Black',
-    textTransform: 'uppercase',
   }
 });
