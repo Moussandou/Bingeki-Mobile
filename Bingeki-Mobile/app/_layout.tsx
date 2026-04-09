@@ -2,7 +2,7 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect } from 'react';
-import { useFonts, Outfit_700Bold } from '@expo-google-fonts/outfit';
+import { useFonts, Outfit_700Bold, Outfit_900Black } from '@expo-google-fonts/outfit';
 import { Inter_400Regular, Inter_700Bold } from '@expo-google-fonts/inter';
 import * as SplashScreen from 'expo-splash-screen';
 import 'react-native-reanimated';
@@ -20,6 +20,7 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded, error] = useFonts({
     Outfit_700Bold,
+    Outfit_900Black,
     Inter_400Regular,
     Inter_700Bold,
   });

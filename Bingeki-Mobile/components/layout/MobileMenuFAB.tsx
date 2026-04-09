@@ -10,21 +10,26 @@ import Animated, {
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
-import { MaterialIcons } from '@expo/vector-icons';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '../themed-text';
+import { IconSymbol } from '../ui/icon-symbol';
 
 const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
 
 interface MenuItemProps {
-  item: { label: string; icon: string; route: string; color: string };
+  item: { label: string; icon: any; route: string; color?: string };
   index: number;
   isOpen: boolean;
   onPress: (route: string) => void;
 }
 
 function MenuItem({ item, index, isOpen, onPress }: MenuItemProps) {
+  const primaryPink = useThemeColor({}, 'primary');
+  const textColor = useThemeColor({}, 'text');
+  const surfaceColor = useThemeColor({}, 'surface');
+  
   const animatedStyle = useAnimatedStyle(() => {
     // Fast snappy delay (40ms interval)
     const delay = index * 40;
@@ -48,11 +53,11 @@ function MenuItem({ item, index, isOpen, onPress }: MenuItemProps) {
   return (
     <Animated.View style={animatedStyle}>
       <Pressable
-        style={styles.pillButton}
+        style={[styles.pillButton, { backgroundColor: surfaceColor }]}
         onPress={() => onPress(item.route)}
       >
-        <MaterialIcons name={item.icon as any} size={22} color={item.color} />
-        <ThemedText style={[styles.pillLabel, item.label === 'Déconnexion' && { color: '#FF2E63' }]}>
+        <IconSymbol name={item.icon} size={22} color={item.color || primaryPink} />
+        <ThemedText style={[styles.pillLabel, { color: textColor }, item.label === 'Déconnexion' && { color: primaryPink }]}>
           {item.label}
         </ThemedText>
       </Pressable>
@@ -64,6 +69,9 @@ export function MobileMenuFAB() {
   const router = useRouter();
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
+  const primaryPink = useThemeColor({}, 'primary');
+  const surfaceColor = useThemeColor({}, 'surface');
+  const textColor = useThemeColor({}, 'text');
   const [isOpen, setIsOpen] = useState(false);
 
   const animation = useSharedValue(0);
@@ -84,7 +92,7 @@ export function MobileMenuFAB() {
 
   const fabStyle = useAnimatedStyle(() => {
     return {
-      backgroundColor: animation.value > 0.5 ? '#FF2E63' : (colorScheme === 'dark' ? '#222' : '#FFF'),
+      backgroundColor: animation.value > 0.5 ? primaryPink : surfaceColor,
       transform: [
         { rotate: `${animation.value * 90}deg` },
         { scale: withTiming(isOpen ? 1.1 : 1, { duration: 200 }) }
@@ -100,16 +108,16 @@ export function MobileMenuFAB() {
   });
 
   const menuItems = [
-    { label: 'Déconnexion', icon: 'exit-to-app', route: '/(auth)/login', color: '#FF2E63' },
-    { label: 'Mes Tickets', icon: 'confirmation-number', route: '/social', color: '#FF2E63' },
-    { label: 'Mon Profil', icon: 'person-outline', route: '/profile', color: '#FF2E63' },
-    { label: 'Paramètres', icon: 'settings', route: '/profile', color: '#FF2E63' },
-    { label: 'Donner un avis', icon: 'rate-review', route: '/social', color: '#FF2E63' },
-    { label: 'ANIME LENS', icon: 'filter-center-focus', route: '/', color: '#FF2E63' },
-    { label: 'Anime News', icon: 'article', route: '/', color: '#FF2E63' },
-    { label: 'CHANGELOG', icon: 'history', route: '/', color: '#FF2E63' },
-    { label: 'AGENDA', icon: 'calendar-today', route: '/', color: '#FF2E63' },
-    { label: 'COMMUNAUTÉ', icon: 'people-outline', route: '/social', color: '#FF2E63' },
+    { label: 'Déconnexion', icon: 'logout', route: '/(auth)/login' },
+    { label: 'Mes Tickets', icon: 'ticket.fill', route: '/social' },
+    { label: 'Mon Profil', icon: 'person.fill', route: '/profile' },
+    { label: 'Paramètres', icon: 'settings', route: '/profile' },
+    { label: 'Donner un avis', icon: 'star.fill', route: '/social' },
+    { label: 'ANIME LENS', icon: 'camera.viewfinder', route: '/' },
+    { label: 'Actualités Anime', icon: 'newspaper.fill', route: '/' },
+    { label: 'CHANGELOG', icon: 'history', route: '/' },
+    { label: 'AGENDA', icon: 'calendar', route: '/' },
+    { label: 'COMMUNAUTÉ', icon: 'person.2.fill', route: '/social' },
   ];
 
   const handleItemPress = (route: string) => {
@@ -139,7 +147,7 @@ export function MobileMenuFAB() {
             {menuItems.map((item, index) => (
               <MenuItem 
                 key={index}
-                item={item}
+                item={item as any}
                 index={index}
                 isOpen={isOpen}
                 onPress={handleItemPress}
@@ -148,17 +156,17 @@ export function MobileMenuFAB() {
           </ScrollView>
           
           <Animated.View style={[styles.scrollHint, { opacity: animation.value }]}>
-            <MaterialIcons name="keyboard-double-arrow-down" size={24} color={theme.textDim} />
-            <ThemedText style={styles.scrollText}>SCROLL</ThemedText>
+            <IconSymbol name="chevron.double.down" size={24} color={theme.textDim} />
+            <ThemedText style={styles.scrollText}>DÉFILER</ThemedText>
           </Animated.View>
         </Animated.View>
 
-        <Pressable onPress={toggleMenu} style={styles.fabWrapper}>
-          <Animated.View style={[styles.fab, fabStyle]}>
-            <MaterialIcons
-              name={isOpen ? 'close' : 'menu'}
+        <Pressable onPress={toggleMenu} style={[styles.fabWrapper, { shadowColor: '#000' }]}>
+          <Animated.View style={[styles.fab, fabStyle, { borderColor: '#000' }]}>
+            <IconSymbol
+              name={isOpen ? 'xmark' : 'line.3.horizontal'}
               size={32}
-              color={isOpen ? '#FFF' : theme.text}
+              color={isOpen ? '#FFF' : textColor}
             />
           </Animated.View>
         </Pressable>
@@ -186,7 +194,6 @@ const styles = StyleSheet.create({
   fabWrapper: {
     borderRadius: 35,
     // Solid brutalist shadow
-    shadowColor: '#000',
     shadowOffset: { width: 5, height: 5 },
     shadowOpacity: 1,
     shadowRadius: 0,
@@ -199,7 +206,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 3,
-    borderColor: '#000',
   },
   menuWrapper: {
     marginBottom: 20,
@@ -225,7 +231,6 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
   pillButton: {
-    backgroundColor: '#FFF',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
@@ -241,7 +246,6 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
   },
   pillLabel: {
-    color: '#333',
     fontFamily: 'Outfit_700Bold',
     fontSize: 15,
     textTransform: 'uppercase',

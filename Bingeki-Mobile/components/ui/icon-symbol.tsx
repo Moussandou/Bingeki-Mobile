@@ -29,6 +29,15 @@ const MAPPING = {
   'history': 'history',
   'calendar': 'calendar-today',
   'chat': 'chat-bubble-outline',
+  'ticket.fill': 'confirmation-number',
+  'star.fill': 'rate-review',
+  'camera.viewfinder': 'filter-center-focus',
+  'newspaper.fill': 'article',
+  'person.2.fill': 'people-outline',
+  'more.horizontal': 'more-horiz',
+  'xmark': 'close',
+  'line.3.horizontal': 'menu',
+  'chevron.double.down': 'keyboard-double-arrow-down',
 } as IconMapping;
 
 /**
