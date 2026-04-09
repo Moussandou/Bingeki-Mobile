@@ -8,10 +8,8 @@ import Animated, {
   withTiming,
   FadeIn,
   FadeOut,
-  FadeInDown,
-  FadeOutDown,
-  FadeInRight,
-  FadeOutRight
+  FadeInUp,
+  Easing
 } from 'react-native-reanimated';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
@@ -40,20 +38,32 @@ export function MobileMenuFAB() {
 
   const toggleMenu = () => {
     const nextState = !isOpen;
+    // Utilisation de Timing + Expo Out pour éviter l'oscillation (wobble)
+    animation.value = withTiming(nextState ? 1 : 0, { 
+      duration: 300,
+      easing: Easing.out(Easing.exp) 
+    });
     setIsOpen(nextState);
-    animation.value = withSpring(nextState ? 1 : 0, { damping: 15 });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const overlayStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(animation.value, { duration: 200 }),
+    opacity: animation.value,
     pointerEvents: isOpen ? 'auto' : 'none',
   }));
 
   const fabAnimatedStyle = useAnimatedStyle(() => ({
     transform: [
       { rotate: `${animation.value * 90}deg` },
-      { scale: withSpring(isOpen ? 1.1 : 1) }
+      { scale: withSpring(animation.value > 0.5 ? 1.1 : 1, { damping: 20, stiffness: 200 }) }
+    ],
+  }));
+
+  const menuAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: animation.value,
+    transform: [
+      { translateY: (1 - animation.value) * 20 },
+      { scale: 0.95 + (animation.value * 0.05) }
     ],
   }));
 
@@ -75,12 +85,19 @@ export function MobileMenuFAB() {
   };
 
   const handleItemPress = (route: string) => {
-    setIsOpen(false);
-    animation.value = withTiming(0);
+    // Animation de fermeture synchronisée
+    animation.value = withTiming(0, { 
+      duration: 250,
+      easing: Easing.out(Easing.exp) 
+    });
+    
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    
+    // On attend un court délai pour laisser l'animation commencer
     setTimeout(() => {
+      setIsOpen(false);
       router.push(route as any);
-    }, 300);
+    }, 200);
   };
 
   return (
@@ -97,45 +114,42 @@ export function MobileMenuFAB() {
       </Animated.View>
 
       <View style={styles.container} pointerEvents="box-none">
-        {/* Menu Wrapper (Staggered items) */}
-        <View style={styles.menuWrapper} pointerEvents="box-none">
-          {isOpen && (
-            <ScrollView 
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollContent}
-              style={{ maxHeight: SCREEN_HEIGHT * 0.6 }}
-            >
-              {menuItems.map((item, index) => (
-                <Animated.View
-                  key={item.label}
-                  entering={FadeInRight.delay(index * 40).springify().damping(12)}
-                  exiting={FadeOutRight.duration(150)}
+        {/* Menu Wrapper (Controlled by animation.value) */}
+        <Animated.View 
+          style={[styles.menuWrapper, menuAnimatedStyle]} 
+          pointerEvents={isOpen ? 'auto' : 'none'}
+        >
+          <ScrollView 
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={styles.scrollContent}
+            style={{ maxHeight: SCREEN_HEIGHT * 0.6 }}
+          >
+            {menuItems.map((item, index) => (
+              <View key={item.label} style={styles.menuItemContainer}>
+                <Pressable 
+                  onPress={() => handleItemPress(item.route)}
+                  style={({ pressed }) => [
+                    styles.pillButton,
+                    { 
+                      backgroundColor: surfaceColor,
+                      borderColor: borderHeavyColor,
+                      // Custom sharp shadow implementation
+                      shadowColor: pressed ? primaryPink : '#000',
+                      shadowOffset: { width: 4, height: 4 },
+                      shadowOpacity: 1,
+                      shadowRadius: 0,
+                    }
+                  ]}
                 >
-                  <Pressable 
-                    onPress={() => handleItemPress(item.route)}
-                    style={({ pressed }) => [
-                      styles.pillButton,
-                      { 
-                        backgroundColor: surfaceColor,
-                        borderColor: borderHeavyColor,
-                        // Custom sharp shadow implementation
-                        shadowColor: pressed ? primaryPink : '#000',
-                        shadowOffset: { width: 4, height: 4 },
-                        shadowOpacity: 1,
-                        shadowRadius: 0,
-                      }
-                    ]}
-                  >
-                    <IconSymbol name={item.icon as any} size={20} color={item.label === 'Déconnexion' ? primaryPink : textColor} />
-                    <ThemedText style={[styles.pillLabel, { color: item.label === 'Déconnexion' ? primaryPink : textColor }]}>
-                      {formatLabel(item.label)}
-                    </ThemedText>
-                  </Pressable>
-                </Animated.View>
-              ))}
-            </ScrollView>
-          )}
-        </View>
+                  <IconSymbol name={item.icon as any} size={20} color={item.label === 'Déconnexion' ? primaryPink : textColor} />
+                  <ThemedText style={[styles.pillLabel, { color: item.label === 'Déconnexion' ? primaryPink : textColor }]}>
+                    {formatLabel(item.label)}
+                  </ThemedText>
+                </Pressable>
+              </View>
+            ))}
+          </ScrollView>
+        </Animated.View>
 
         {/* FAB Button */}
         <Pressable onPress={toggleMenu} style={styles.fabWrapper}>
@@ -182,6 +196,9 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingRight: 5,
     paddingBottom: 10,
+  },
+  menuItemContainer: {
+    marginBottom: 12,
   },
   pillButton: {
     flexDirection: 'row',
