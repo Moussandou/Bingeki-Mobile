@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { StyleSheet, Pressable, View, Dimensions, ScrollView } from 'react-native';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring, 
-  interpolate,
+import { StyleSheet, Pressable, View, Dimensions, ScrollView, TouchableWithoutFeedback } from 'react-native';
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+  withDelay,
+  withTiming,
 } from 'react-native-reanimated';
+import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -13,7 +15,50 @@ import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { ThemedText } from '../themed-text';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
+
+interface MenuItemProps {
+  item: { label: string; icon: string; route: string; color: string };
+  index: number;
+  isOpen: boolean;
+  onPress: (route: string) => void;
+}
+
+function MenuItem({ item, index, isOpen, onPress }: MenuItemProps) {
+  const animatedStyle = useAnimatedStyle(() => {
+    // Fast snappy delay (40ms interval)
+    const delay = index * 40;
+    
+    return {
+      opacity: withDelay(
+        delay,
+        withTiming(isOpen ? 1 : 0, { duration: 200 })
+      ),
+      transform: [
+        {
+          translateX: withDelay(
+            delay,
+            withTiming(isOpen ? 0 : 20, { duration: 200 })
+          ),
+        },
+      ],
+    };
+  });
+
+  return (
+    <Animated.View style={animatedStyle}>
+      <Pressable
+        style={styles.pillButton}
+        onPress={() => onPress(item.route)}
+      >
+        <MaterialIcons name={item.icon as any} size={22} color={item.color} />
+        <ThemedText style={[styles.pillLabel, item.label === 'Déconnexion' && { color: '#FF2E63' }]}>
+          {item.label}
+        </ThemedText>
+      </Pressable>
+    </Animated.View>
+  );
+}
 
 export function MobileMenuFAB() {
   const router = useRouter();
@@ -26,19 +71,23 @@ export function MobileMenuFAB() {
   const toggleMenu = () => {
     const nextState = !isOpen;
     setIsOpen(nextState);
-    animation.value = withSpring(nextState ? 1 : 0, {
-      damping: 18,
-      stiffness: 90,
-    });
+    animation.value = withTiming(nextState ? 1 : 0, { duration: 300 });
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
+
+  const overlayStyle = useAnimatedStyle(() => {
+    return {
+      opacity: withTiming(animation.value, { duration: 300 }),
+      pointerEvents: isOpen ? 'auto' : 'none',
+    };
+  });
 
   const fabStyle = useAnimatedStyle(() => {
     return {
       backgroundColor: animation.value > 0.5 ? '#FF2E63' : (colorScheme === 'dark' ? '#222' : '#FFF'),
       transform: [
         { rotate: `${animation.value * 90}deg` },
-        { scale: withSpring(isOpen ? 1.1 : 1) }
+        { scale: withTiming(isOpen ? 1.1 : 1, { duration: 200 }) }
       ],
     };
   });
@@ -46,9 +95,6 @@ export function MobileMenuFAB() {
   const menuStyle = useAnimatedStyle(() => {
     return {
       opacity: animation.value,
-      transform: [
-        { translateY: interpolate(animation.value, [0, 1], [30, 0]) },
-      ],
       pointerEvents: isOpen ? 'auto' : 'none',
     };
   });
@@ -66,51 +112,73 @@ export function MobileMenuFAB() {
     { label: 'COMMUNAUTÉ', icon: 'people-outline', route: '/social', color: '#FF2E63' },
   ];
 
-  const handleItemPress = (route: any) => {
+  const handleItemPress = (route: string) => {
     toggleMenu();
-    router.push(route);
+    router.push(route as any);
   };
 
   return (
-    <View style={styles.container}>
-      <Animated.View style={[styles.menuWrapper, menuStyle]}>
-        <ScrollView 
-          showsVerticalScrollIndicator={false} 
-          contentContainerStyle={styles.scrollContent}
-          style={{ maxHeight: SCREEN_HEIGHT * 0.6 }}
-        >
-          {menuItems.map((item, index) => (
-            <Pressable 
-              key={index} 
-              style={styles.pillButton}
-              onPress={() => handleItemPress(item.route)}
-            >
-              <MaterialIcons name={item.icon as any} size={22} color={item.color} />
-              <ThemedText style={[styles.pillLabel, item.label === 'Déconnexion' && { color: '#FF2E63' }]}>
-                {item.label}
-              </ThemedText>
-            </Pressable>
-          ))}
-        </ScrollView>
+    <>
+      <Animated.View style={[styles.fullScreenOverlay, overlayStyle]}>
+        <TouchableWithoutFeedback onPress={toggleMenu}>
+          <BlurView 
+            intensity={60} 
+            tint={colorScheme === 'dark' ? 'dark' : 'light'} 
+            style={StyleSheet.absoluteFill} 
+          />
+        </TouchableWithoutFeedback>
       </Animated.View>
 
-      <Pressable onPress={toggleMenu} style={styles.fabWrapper}>
-        <Animated.View style={[styles.fab, fabStyle]}>
-          <MaterialIcons 
-            name={isOpen ? 'close' : 'menu'} 
-            size={32} 
-            color={isOpen ? '#FFF' : theme.text} 
-          />
+      <View style={styles.container}>
+        <Animated.View style={[styles.menuWrapper, menuStyle]}>
+          <ScrollView
+            showsVerticalScrollIndicator={true}
+            contentContainerStyle={styles.scrollContent}
+            style={{ maxHeight: SCREEN_HEIGHT * 0.6 }}
+          >
+            {menuItems.map((item, index) => (
+              <MenuItem 
+                key={index}
+                item={item}
+                index={index}
+                isOpen={isOpen}
+                onPress={handleItemPress}
+              />
+            ))}
+          </ScrollView>
+          
+          <Animated.View style={[styles.scrollHint, { opacity: animation.value }]}>
+            <MaterialIcons name="keyboard-double-arrow-down" size={24} color={theme.textDim} />
+            <ThemedText style={styles.scrollText}>SCROLL</ThemedText>
+          </Animated.View>
         </Animated.View>
-      </Pressable>
-    </View>
+
+        <Pressable onPress={toggleMenu} style={styles.fabWrapper}>
+          <Animated.View style={[styles.fab, fabStyle]}>
+            <MaterialIcons
+              name={isOpen ? 'close' : 'menu'}
+              size={32}
+              color={isOpen ? '#FFF' : theme.text}
+            />
+          </Animated.View>
+        </Pressable>
+      </View>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
+  fullScreenOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: SCREEN_WIDTH,
+    height: SCREEN_HEIGHT,
+    zIndex: 900,
+  },
   container: {
     position: 'absolute',
-    bottom: 40,
+    bottom: 110, // Slight adjustment for spacing
     right: 20,
     alignItems: 'flex-end',
     zIndex: 1000,
@@ -135,12 +203,26 @@ const styles = StyleSheet.create({
   },
   menuWrapper: {
     marginBottom: 20,
-    width: 240,
+    alignItems: 'flex-end',
   },
   scrollContent: {
     gap: 10,
-    paddingBottom: 10,
+    paddingBottom: 20,
     alignItems: 'flex-end',
+    paddingRight: 15,
+  },
+  scrollHint: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginRight: 20,
+    marginTop: 8,
+    opacity: 0.6,
+  },
+  scrollText: {
+    fontSize: 10,
+    fontFamily: 'Outfit_900Black',
+    letterSpacing: 1,
   },
   pillButton: {
     backgroundColor: '#FFF',
@@ -150,7 +232,6 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 30,
     gap: 12,
-    width: '100%',
     borderWidth: 2,
     borderColor: '#000',
     // Solid shadow for the pills
