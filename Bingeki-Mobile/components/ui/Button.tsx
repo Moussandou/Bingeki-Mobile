@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Pressable, ViewStyle, TextStyle, ActivityIndicator, View } from 'react-native';
+import { StyleSheet, Pressable, ViewStyle, TextStyle, ActivityIndicator, View, StyleProp } from 'react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -21,8 +21,8 @@ export interface ButtonProps {
   disabled?: boolean;
   icon?: React.ReactNode;
   onPress?: () => void;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
+  style?: StyleProp<ViewStyle>;
+  textStyle?: StyleProp<TextStyle>;
   children?: React.ReactNode;
 }
 

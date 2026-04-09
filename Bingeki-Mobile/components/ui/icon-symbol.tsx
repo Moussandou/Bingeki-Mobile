@@ -18,9 +18,17 @@ const MAPPING = {
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
-  'book.closed.fill': 'book',
+  'book.closed.fill': 'book-outline',
   'person.3.fill': 'people',
-  'person.fill': 'person',
+  'person.fill': 'person-outline',
+  'magnifyingglass': 'search',
+  'squareshape.fill': 'dashboard',
+  'safari': 'explore',
+  'logout': 'exit-to-app',
+  'settings': 'settings',
+  'history': 'history',
+  'calendar': 'calendar-today',
+  'chat': 'chat-bubble-outline',
 } as IconMapping;
 
 /**
