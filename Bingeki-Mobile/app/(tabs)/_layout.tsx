@@ -29,7 +29,7 @@ export default function TabLayout() {
           }}
         />
         <Tabs.Screen
-          name="social"
+          name="discover"
           options={{
             title: 'Discover',
             tabBarIcon: ({ color }) => <IconSymbol size={28} name="magnifyingglass" color={color} />,

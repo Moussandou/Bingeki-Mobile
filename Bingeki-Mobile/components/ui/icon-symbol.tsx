@@ -5,7 +5,7 @@ import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
 import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
-type IconMapping = Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>;
+type IconMapping = Partial<Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>>;
 type IconSymbolName = keyof typeof MAPPING;
 
 /**
@@ -24,21 +24,27 @@ const MAPPING = {
   'magnifyingglass': 'search',
   'squareshape.fill': 'dashboard',
   'safari': 'explore',
-  'logout': 'exit-to-app',
-  'settings': 'settings',
-  'history': 'history',
-  'calendar': 'calendar-today',
-  'chat': 'chat-bubble-outline',
+  'rectangle.portrait.and.arrow.right': 'exit-to-app', // logout
+  'gearshape.fill': 'settings', // settings
+  'clock.arrow.circlepath': 'history', // history
+  'calendar': 'calendar-today', // calendar
+  'bubble.left': 'chat-bubble-outline', // chat
   'ticket.fill': 'confirmation-number',
   'star.fill': 'rate-review',
   'camera.viewfinder': 'filter-center-focus',
   'newspaper.fill': 'article',
   'person.2.fill': 'people-outline',
-  'more.horizontal': 'more-horiz',
+  'ellipsis': 'more-horiz',
   'xmark': 'close',
   'line.3.horizontal': 'menu',
-  'chevron.double.down': 'keyboard-double-arrow-down',
-} as IconMapping;
+  'chevron.down.2': 'keyboard-double-arrow-down',
+  'flame.fill': 'local-fire-department',
+  'target': 'track-changes',
+  'chart.bar.fill': 'bar-chart',
+  'plus': 'add',
+  'arrow.up.right': 'show-chart',
+  'book.fill': 'book',
+} as const satisfies IconMapping;
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.

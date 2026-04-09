@@ -24,7 +24,9 @@ export const Colors = {
     primary: primaryPink,
     secondary: secondaryCyan,
     primaryGlow: 'rgba(255, 46, 99, 0.5)',
-    error: '#ff3333'
+    error: '#ff3333',
+    dots: '#000000',
+    halftoneOpacity: 0.1,
   },
   dark: {
     text: '#e0e0e0',
@@ -35,13 +37,15 @@ export const Colors = {
     tabIconDefault: '#a0a0a0',
     tabIconSelected: primaryPink,
     border: '#333333',
-    borderHeavy: '#000000', // Absolute black for manga style contrast
+    borderHeavy: '#ffffff',
     surface: '#1e1e1e',
     surfaceHover: '#2d2d2d',
     primary: primaryPink,
     secondary: secondaryCyan,
     primaryGlow: 'rgba(255, 46, 99, 0.5)',
-    error: '#ff3333'
+    error: '#ff3333',
+    dots: '#ffffff',
+    halftoneOpacity: 0.05,
   },
 };
 
@@ -56,7 +60,8 @@ export const Spacing = {
 
 export const Borders = {
   width: 4,
-  radius: 0,
+  radius: 12,
+  mangaRadius: 0,
 };
 
 export const Shadows = {
@@ -65,21 +70,21 @@ export const Shadows = {
     shadowOffset: { width: 6, height: 6 },
     shadowOpacity: 1,
     shadowRadius: 0,
-    elevation: 6,
+    elevation: 0, // Used with custom back-view on Android
   },
-  brutalHover: {
+  brutalPressed: {
     shadowColor: primaryPink,
-    shadowOffset: { width: 8, height: 8 },
+    shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 0,
-    elevation: 8,
+    elevation: 0,
   },
   glass: {
     shadowColor: '#000000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 0,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.25,
+    shadowRadius: 20,
+    elevation: 8,
   }
 };
 

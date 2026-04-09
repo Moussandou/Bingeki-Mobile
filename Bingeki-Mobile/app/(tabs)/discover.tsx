@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const SocialScreen = () => {
+const DiscoverScreen = () => {
     return (
         <View>
-            <Text>SocialScreen</Text>
+            <Text>DiscoverScreen</Text>
         </View>
     )
 }
 
-export default SocialScreen
+export default DiscoverScreen

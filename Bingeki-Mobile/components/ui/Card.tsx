@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Pressable, ViewStyle, ViewProps, View } from 'react-native';
+import { StyleSheet, Pressable, ViewStyle, ViewProps, View, Platform } from 'react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -37,9 +37,11 @@ export function Card({
   const scale = useSharedValue(1);
   const translationX = useSharedValue(0);
   const translationY = useSharedValue(0);
-  const shadowOffsetX = useSharedValue(isManga ? Shadows.brutal.shadowOffset.width : 0);
-  const shadowOffsetY = useSharedValue(isManga ? Shadows.brutal.shadowOffset.height : 0);
-  const shadowColor = useSharedValue(isManga ? Shadows.brutal.shadowColor : 'transparent');
+  
+  const shadowSettings = isManga ? Shadows.brutal : Shadows.glass;
+  const shadowOffsetX = useSharedValue(shadowSettings.shadowOffset.width);
+  const shadowOffsetY = useSharedValue(shadowSettings.shadowOffset.height);
+  const shadowColor = useSharedValue(shadowSettings.shadowColor);
 
   const animatedStyle = useAnimatedStyle(() => {
     return {
@@ -48,6 +50,7 @@ export function Card({
         { translateX: translationX.value },
         { translateY: translationY.value },
       ],
+      // iOS Shadow
       shadowOffset: {
         width: shadowOffsetX.value,
         height: shadowOffsetY.value,
@@ -61,10 +64,10 @@ export function Card({
     scale.value = withSpring(0.98);
     
     if (isManga) {
-      translationX.value = withSpring(-2);
-      translationY.value = withSpring(-2);
-      shadowOffsetX.value = withSpring(Shadows.brutalHover.shadowOffset.width);
-      shadowOffsetY.value = withSpring(Shadows.brutalHover.shadowOffset.height);
+      translationX.value = withSpring(2); // Simulating press down
+      translationY.value = withSpring(2);
+      shadowOffsetX.value = withSpring(Shadows.brutalPressed.shadowOffset.width);
+      shadowOffsetY.value = withSpring(Shadows.brutalPressed.shadowOffset.height);
       shadowColor.value = primaryColor;
     }
   };
@@ -82,57 +85,69 @@ export function Card({
     }
   };
 
-  const getVariantStyles = (): ViewStyle => {
-    if (isManga) {
-      return {
-        borderWidth: Borders.width,
-        borderRadius: Borders.radius,
-        ...Shadows.brutal,
-      };
-    }
-    if (isGlass) {
-      return {
-        borderWidth: 1,
-        borderRadius: 12,
-        backgroundColor: 'rgba(30, 32, 37, 0.8)',
-        ...Shadows.glass,
-      };
-    }
-    return {
-      borderWidth: 1,
-      borderRadius: 12,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 2,
-    };
-  };
-
   const Component = (hoverable || onPress) ? AnimatedPressable : Animated.View;
 
+  // Render the sharp shadow for Android or fallback to iOS native shadow
+  const renderShadow = () => {
+    if (!isManga || Platform.OS !== 'android') return null;
+    
+    return (
+      <Animated.View
+        style={[
+          styles.androidShadow,
+          {
+            backgroundColor: shadowColor.value as any,
+            top: shadowOffsetY.value,
+            left: shadowOffsetX.value,
+            right: -shadowOffsetX.value,
+            bottom: -shadowOffsetY.value,
+            borderRadius: Borders.mangaRadius,
+          }
+        ]}
+      />
+    );
+  };
+
   return (
-    <Component
-      onPress={onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      style={[
-        styles.card,
-        isManga ? { borderColor, backgroundColor } : { borderColor, backgroundColor },
-        getVariantStyles(),
-        animatedStyle,
-        style as ViewStyle,
-      ]}
-      {...props as any}
-    >
-      {children}
-    </Component>
+    <View style={styles.shadowWrapper}>
+      {renderShadow()}
+      <Component
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={[
+          styles.card,
+          {
+            backgroundColor,
+            borderColor,
+            borderWidth: isManga ? Borders.width : (isGlass ? 1 : 0),
+            borderRadius: isManga ? Borders.mangaRadius : (isGlass ? 12 : 8),
+            ...(Platform.OS === 'ios' ? (isManga ? Shadows.brutal : (isGlass ? Shadows.glass : {})) : {}),
+            shadowOpacity: 1, // Force full opacity for manga
+            shadowRadius: 0,  // Force hard edge for manga
+          },
+          animatedStyle,
+          style as ViewStyle,
+        ]}
+        {...props as any}
+      >
+        {children}
+      </Component>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  shadowWrapper: {
+    position: 'relative',
+    overflow: 'visible',
+  },
+  androidShadow: {
+    position: 'absolute',
+    zIndex: -1,
+  },
   card: {
     padding: 16,
-    overflow: 'visible', // Needed for brutalist shadow to show
+    overflow: 'visible',
   },
 });

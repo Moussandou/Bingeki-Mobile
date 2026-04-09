@@ -15,11 +15,11 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
   const theme = Colors[colorScheme ?? 'light'];
 
   // Filter routes to show only Dashboard, Discover, Library
-  const validRoutes = ['index', 'social', 'library'];
+  const validRoutes = ['index', 'discover', 'library'];
   const routes = state.routes.filter(route => validRoutes.includes(route.name));
 
   return (
-    <View style={[styles.container, { bottom: 20 + insets.bottom / 2, backgroundColor: theme.surface }]}>
+    <View style={[styles.container, { backgroundColor: theme.surface, borderColor: theme.borderHeavy }]}>
       <View style={styles.content}>
         {routes.map((route, index) => {
           const isFocused = state.index === state.routes.findIndex(r => r.key === route.key);
@@ -40,7 +40,7 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
           const getIcon = () => {
             switch (route.name) {
               case 'index': return 'house.fill';
-              case 'social': return 'safari';
+              case 'discover': return 'magnifyingglass';
               case 'library': return 'book.closed.fill';
               default: return 'house.fill';
             }
@@ -52,13 +52,13 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
               onPress={onPress}
               style={[
                 styles.tabItem,
-                isFocused && { backgroundColor: theme.primary + '20' } // Subtle background for active
+                isFocused && { backgroundColor: theme.text, borderRadius: 12 } // Box noire brutaliste pour le focus
               ]}
             >
               <IconSymbol 
                 name={getIcon() as any} 
-                size={28} 
-                color={isFocused ? theme.primary : theme.text} 
+                size={24} 
+                color={isFocused ? theme.background : theme.text} 
               />
             </Pressable>
           );
@@ -71,26 +71,25 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
+    bottom: 30,             // Flotte au-dessus du bas
     alignSelf: 'center',
-    width: width * 0.7,
+    width: '75%',           // Barre compacte
     height: 70,
-    borderRadius: 35,
-    overflow: 'hidden',
-    borderWidth: 1.5,
-    borderColor: 'rgba(255, 255, 255, 0.1)',
-    // Shadow for landing depth
+    borderRadius: 35,       // Style "capsule"
+    borderWidth: 3,         // Outline manga
+    // Ombre déportée (Hard shadow)
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.3,
-    shadowRadius: 15,
-    elevation: 10,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 8,           // Fallback Android
   },
   content: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
-    paddingHorizontal: 10,
+    paddingHorizontal: 15,
   },
   tabItem: {
     width: 50,

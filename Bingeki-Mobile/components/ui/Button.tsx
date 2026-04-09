@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Pressable, ViewStyle, TextStyle, ActivityIndicator, View, StyleProp } from 'react-native';
+import { StyleSheet, Pressable, ViewStyle, TextStyle, ActivityIndicator, View, StyleProp, Platform } from 'react-native';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -47,10 +47,15 @@ export function Button({
   const surfaceColor = useThemeColor({}, 'surface');
   const textColor = useThemeColor({}, 'text');
   const backgroundColor = useThemeColor({}, 'background');
+  const borderHeavyColor = useThemeColor({}, 'borderHeavy');
   
   const scale = useSharedValue(1);
   const translationX = useSharedValue(0);
   const translationY = useSharedValue(0);
+
+  const shadowOffsetX = useSharedValue(isManga ? Shadows.brutal.shadowOffset.width : 0);
+  const shadowOffsetY = useSharedValue(isManga ? Shadows.brutal.shadowOffset.height : 0);
+  const shadowColor = useSharedValue(isManga ? Shadows.brutal.shadowColor : 'transparent');
 
   const getBackgroundColor = () => {
     if (disabled) return useThemeColor({}, 'border');
@@ -80,7 +85,7 @@ export function Button({
     if (disabled) return 'transparent';
     switch (variant) {
       case 'outline': return primaryColor;
-      case 'manga': return useThemeColor({}, 'borderHeavy');
+      case 'manga': return borderHeavyColor;
       default: return 'transparent';
     }
   };
@@ -92,18 +97,26 @@ export function Button({
         { translateX: translationX.value },
         { translateY: translationY.value },
       ],
+      // iOS Shadow
+      shadowOffset: {
+        width: shadowOffsetX.value,
+        height: shadowOffsetY.value,
+      },
+      shadowColor: shadowColor.value,
     };
   });
 
   const handlePressIn = () => {
     if (disabled || isLoading) return;
     
-    // Scale down interaction
-    scale.value = withSpring(0.95);
+    scale.value = withSpring(0.98);
     
     if (isManga) {
       translationX.value = withSpring(2);
       translationY.value = withSpring(2);
+      shadowOffsetX.value = withSpring(Shadows.brutalPressed.shadowOffset.width);
+      shadowOffsetY.value = withSpring(Shadows.brutalPressed.shadowOffset.height);
+      shadowColor.value = primaryColor;
     }
   };
 
@@ -115,23 +128,25 @@ export function Button({
     if (isManga) {
       translationX.value = withSpring(0);
       translationY.value = withSpring(0);
+      shadowOffsetX.value = withSpring(Shadows.brutal.shadowOffset.width);
+      shadowOffsetY.value = withSpring(Shadows.brutal.shadowOffset.height);
+      shadowColor.value = Shadows.brutal.shadowColor;
     }
   };
 
   const handlePress = () => {
     if (disabled || isLoading) return;
-    // Trigger haptic feedback exactly as Web design system
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onPress?.();
   };
 
   const getSizeStyles = (): ViewStyle => {
     switch (size) {
-      case 'sm': return { paddingVertical: 8, paddingHorizontal: 12, minHeight: 36 };
-      case 'lg': return { paddingVertical: 16, paddingHorizontal: 24, minHeight: 56 };
+      case 'sm': return { paddingVertical: 8, paddingHorizontal: 12, minHeight: 40 };
+      case 'lg': return { paddingVertical: 16, paddingHorizontal: 24, minHeight: 60 };
       case 'icon': return { padding: 12, aspectRatio: 1, minHeight: 44, justifyContent: 'center' };
       case 'md':
-      default: return { paddingVertical: 12, paddingHorizontal: 16, minHeight: 44 };
+      default: return { paddingVertical: 12, paddingHorizontal: 16, minHeight: 48 };
     }
   };
 
@@ -144,56 +159,92 @@ export function Button({
     }
   };
 
+  // Render the sharp shadow for Android or fallback to iOS native shadow
+  const renderShadow = () => {
+    if (!isManga || Platform.OS !== 'android' || disabled) return null;
+    
+    return (
+      <Animated.View
+        style={[
+          styles.androidShadow,
+          {
+            backgroundColor: shadowColor.value as any,
+            top: shadowOffsetY.value,
+            left: shadowOffsetX.value,
+            right: -shadowOffsetX.value,
+            bottom: -shadowOffsetY.value,
+            borderRadius: Borders.mangaRadius,
+          }
+        ]}
+      />
+    );
+  };
+
   return (
-    <AnimatedPressable
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      onPress={handlePress}
-      disabled={disabled || isLoading}
-      style={[
-        styles.buttonBase,
-        getSizeStyles(),
-        {
-          backgroundColor: getBackgroundColor(),
-          borderColor: getBorderColor(),
-          borderWidth: variant === 'outline' || isManga ? (isManga ? Borders.width : 2) : 0,
-          borderRadius: isManga ? Borders.radius : 8,
-          opacity: disabled ? 0.6 : 1,
-        },
-        isManga && !disabled && Shadows.brutal,
-        animatedStyle,
-        style,
-      ]}
-    >
-      {isLoading ? (
-        <ActivityIndicator color={getTextColor()} />
-      ) : (
-        <View style={styles.contentContainer}>
-          {icon && <View style={styles.iconContainer}>{icon}</View>}
-          {(title || children) && size !== 'icon' && (
-            <ThemedText
-              style={[
-                styles.text,
-                { color: getTextColor(), fontSize: getTextSize() },
-                isManga && { fontFamily: Fonts.headingBold, textTransform: 'uppercase' },
-                textStyle,
-              ]}
-            >
-              {title || children}
-            </ThemedText>
-          )}
-        </View>
-      )}
-    </AnimatedPressable>
+    <View style={styles.shadowWrapper}>
+      {renderShadow()}
+      <AnimatedPressable
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        onPress={handlePress}
+        disabled={disabled || isLoading}
+        style={[
+          styles.buttonBase,
+          getSizeStyles(),
+          {
+            backgroundColor: getBackgroundColor(),
+            borderColor: getBorderColor(),
+            borderWidth: variant === 'outline' || isManga ? (isManga ? Borders.width : 2) : 0,
+            borderRadius: isManga ? Borders.mangaRadius : 8,
+            opacity: disabled ? 0.6 : 1,
+            // iOS Sharp Shadow
+            ...(Platform.OS === 'ios' && isManga ? {
+              shadowOpacity: 1,
+              shadowRadius: 0,
+            } : {}),
+          },
+          animatedStyle,
+          style,
+        ]}
+      >
+        {isLoading ? (
+          <ActivityIndicator color={getTextColor()} />
+        ) : (
+          <View style={styles.contentContainer}>
+            {icon && <View style={styles.iconContainer}>{icon}</View>}
+            {(title || children) && size !== 'icon' && (
+              <ThemedText
+                style={[
+                  styles.text,
+                  { color: getTextColor(), fontSize: getTextSize() },
+                  isManga && { fontFamily: Fonts.headingBold, textTransform: 'uppercase' },
+                  textStyle,
+                ]}
+              >
+                {title || children}
+              </ThemedText>
+            )}
+          </View>
+        )}
+      </AnimatedPressable>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  shadowWrapper: {
+    position: 'relative',
+    overflow: 'visible',
+  },
+  androidShadow: {
+    position: 'absolute',
+    zIndex: -1,
+  },
   buttonBase: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'visible', // allows manga shadow to show
+    overflow: 'visible',
   },
   contentContainer: {
     flexDirection: 'row',
