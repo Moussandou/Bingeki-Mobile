@@ -2,7 +2,7 @@
  * API Service for Mobile
  * Wraps Firebase Cloud Functions to fetch anime/manga data
  */
-import { searchWorksFn, getTopWorksFn, getSeasonalAnimeFn } from '@/firebase/functions';
+import { searchWorksFn, getTopWorksFn, getSeasonalAnimeFn, getWorkDetailsFn, getAnimeEpisodesFn } from '@/firebase/functions';
 
 export interface JikanResult {
     mal_id: number;
@@ -48,5 +48,25 @@ export const getSeasonalAnime = async (limit: number = 20): Promise<JikanResult[
     } catch (error) {
         console.error('API Error (Seasonal):', error);
         return [];
+    }
+};
+
+export const getWorkDetails = async (id: number, type: 'anime' | 'manga' = 'anime'): Promise<any> => {
+    try {
+        const result = await getWorkDetailsFn({ id, type });
+        return result.data;
+    } catch (error) {
+        console.error('API Error (Details):', error);
+        return null;
+    }
+};
+
+export const getAnimeEpisodes = async (id: number, page: number = 1): Promise<any> => {
+    try {
+        const result = await getAnimeEpisodesFn({ id, page });
+        return result.data;
+    } catch (error) {
+        console.error('API Error (Episodes):', error);
+        return { data: [], pagination: { has_next_page: false } };
     }
 };

@@ -42,6 +42,11 @@ const MAPPING = {
   'arrow.up.right': 'show-chart',
   'book.fill': 'book',
   'tray': 'inbox',
+  'eye': 'visibility',
+  'eye.slash': 'visibility-off',
+  'trash': 'delete-outline',
+  'checkmark': 'check',
+  'chevron.left': 'chevron-left',
 } as const satisfies IconMapping;
 
 

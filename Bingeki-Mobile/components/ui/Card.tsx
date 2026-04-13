@@ -91,6 +91,18 @@ export function Card({
 
   const Component = (hoverable || onPress) ? AnimatedPressable : Animated.View;
 
+  const androidShadowStyle = useAnimatedStyle(() => {
+    if (!isManga || Platform.OS !== 'android') return {};
+    return {
+      backgroundColor: shadowColor.value as any,
+      top: shadowOffsetY.value,
+      left: shadowOffsetX.value,
+      right: -shadowOffsetX.value,
+      bottom: -shadowOffsetY.value,
+      borderRadius: Borders.mangaRadius,
+    };
+  });
+
   // Android shadow fallback
   const renderShadow = () => {
     if (!isManga || Platform.OS !== 'android') return null;
@@ -99,14 +111,7 @@ export function Card({
       <Animated.View
         style={[
           styles.androidShadow,
-          {
-            backgroundColor: shadowColor.value as any,
-            top: shadowOffsetY.value,
-            left: shadowOffsetX.value,
-            right: -shadowOffsetX.value,
-            bottom: -shadowOffsetY.value,
-            borderRadius: Borders.mangaRadius,
-          }
+          androidShadowStyle
         ]}
       />
     );
@@ -126,8 +131,6 @@ export function Card({
             borderColor,
             borderWidth: isManga ? Borders.width : (isGlass ? 1 : 0),
             borderRadius: isManga ? Borders.mangaRadius : (isGlass ? 12 : 8),
-            ...(Platform.OS === 'ios' ? (isManga ? Shadows.brutal : (isGlass ? Shadows.glass : {})) : {}),
-            shadowOpacity: 1, // Full opacity for manga
           },
           animatedStyle,
           style as ViewStyle,

@@ -1,7 +1,7 @@
 /**
  * Console wrapper: silences logs in production, keeps errors always
  */
-const isDev = import.meta.env.DEV;
+const isDev = __DEV__;
 
 const noop = () => {};
 

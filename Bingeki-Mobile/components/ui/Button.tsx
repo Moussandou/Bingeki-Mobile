@@ -163,6 +163,18 @@ export function Button({
     }
   };
 
+  const androidShadowStyle = useAnimatedStyle(() => {
+    if (!isManga || Platform.OS !== 'android' || disabled) return {};
+    return {
+      backgroundColor: shadowColor.value as any,
+      top: shadowOffsetY.value,
+      left: shadowOffsetX.value,
+      right: -shadowOffsetX.value,
+      bottom: -shadowOffsetY.value,
+      borderRadius: Borders.mangaRadius,
+    };
+  });
+
   // Android shadow fallback
   const renderShadow = () => {
     if (!isManga || Platform.OS !== 'android' || disabled) return null;
@@ -171,14 +183,7 @@ export function Button({
       <Animated.View
         style={[
           styles.androidShadow,
-          {
-            backgroundColor: shadowColor.value as any,
-            top: shadowOffsetY.value,
-            left: shadowOffsetX.value,
-            right: -shadowOffsetX.value,
-            bottom: -shadowOffsetY.value,
-            borderRadius: Borders.mangaRadius,
-          }
+          androidShadowStyle
         ]}
       />
     );
@@ -192,24 +197,19 @@ export function Button({
         onPressOut={handlePressOut}
         onPress={handlePress}
         disabled={disabled || isLoading}
-        style={[
-          styles.buttonBase,
-          getSizeStyles(),
-          {
-            backgroundColor: getBackgroundColor(),
-            borderColor: getBorderColor(),
-            borderWidth: variant === 'outline' || isManga ? (isManga ? Borders.width : 2) : 0,
-            borderRadius: isManga ? Borders.mangaRadius : 8,
-            opacity: disabled ? 0.6 : 1,
-            // Sharp shadow (iOS)
-            ...(Platform.OS === 'ios' && isManga ? {
-              shadowOpacity: 1,
-              shadowRadius: 0,
-            } : {}),
-          },
-          animatedStyle,
-          style,
-        ]}
+          style={[
+            styles.buttonBase,
+            getSizeStyles(),
+            {
+              backgroundColor: getBackgroundColor(),
+              borderColor: getBorderColor(),
+              borderWidth: variant === 'outline' || isManga ? (isManga ? Borders.width : 2) : 0,
+              borderRadius: isManga ? Borders.mangaRadius : 8,
+              opacity: disabled ? 0.6 : 1,
+            },
+            animatedStyle,
+            style,
+          ]}
       >
         {isLoading ? (
           <ActivityIndicator color={getTextColor()} />

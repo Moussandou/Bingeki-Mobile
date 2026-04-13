@@ -10,4 +10,5 @@ export const searchWorksFn = httpsCallable<{ query: string; type: string; page?:
 export const getTopWorksFn = httpsCallable<{ type: string; filter?: string; limit?: number; nsfwMode?: boolean }, any>(functions, 'getTopWorks');
 export const getSeasonalAnimeFn = httpsCallable<{ limit?: number; nsfwMode?: boolean }, any>(functions, 'getSeasonalAnime');
 export const getAnimeEpisodesFn = httpsCallable<{ id: number; page?: number }, any>(functions, 'getAnimeEpisodes');
+export const getFRTranslationFn = httpsCallable<{ id: number; type: string; titleFrench?: string; titleRomaji?: string }, any>(functions, 'getFRTranslation');
 export const getJikanStatusFn = httpsCallable<Record<string, never>, any>(functions, 'getJikanStatus');
