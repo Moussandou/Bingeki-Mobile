@@ -17,6 +17,10 @@ import { calculateRank, getRankColor } from '@/constants/rank';
 
 import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
 
+import { useAuthStore } from '@/store/authStore';
+import { useGamificationStore } from '@/store/gamificationStore';
+import { useLibraryStore } from '@/store/libraryStore';
+
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 export default function DashboardScreen() {
@@ -28,26 +32,41 @@ export default function DashboardScreen() {
   const borderHeavyColor = useThemeColor({}, 'borderHeavy');
   const borderColor = useThemeColor({}, 'border');
 
-  // User stats and progress data
-  const userData = {
-    username: 'TAKAX',
-    level: 12,
-    xp: 131,
-    maxXp: 450,
-    streak: 3,
-    objectives: { current: 3, total: 3 },
-    stats: {
-      chaps: 381,
-      eps: 40,
-      films: 0
-    }
-  };
+  // Unified data from stores
+  const { userProfile, loading: authLoading } = useAuthStore();
+  const { 
+    level, 
+    xp, 
+    xpToNextLevel, 
+    streak, 
+    totalChaptersRead, 
+    totalAnimeEpisodesWatched,
+    totalMoviesWatched 
+  } = useGamificationStore();
+  
+  const works = useLibraryStore((s) => s.works);
+  const completedWorksCount = works.filter(w => w.status === 'completed').length;
 
-  const rank = calculateRank(userData.level);
+  const username = userProfile?.displayName || 'TAKAX';
+  const rank = calculateRank(level);
   const rankColor = getRankColor(rank);
 
   // Generate avatar from username
-  const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.username}&backgroundColor=FF2E63`;
+  const avatarUrl = userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}&backgroundColor=FF2E63`;
+
+  const userData = {
+    username,
+    level,
+    xp,
+    maxXp: xpToNextLevel,
+    streak,
+    objectives: { current: completedWorksCount % 10, total: 10 }, // Placeholder for dynamic objectives
+    stats: {
+      chaps: totalChaptersRead,
+      eps: totalAnimeEpisodesWatched,
+      films: totalMoviesWatched
+    }
+  };
 
   return (
     <BackgroundSystem>

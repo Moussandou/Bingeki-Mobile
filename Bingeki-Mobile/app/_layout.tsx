@@ -12,6 +12,8 @@ import * as SplashScreen from 'expo-splash-screen';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuthSync } from '@/hooks/useAuthSync';
+import { useFirestoreSync } from '@/hooks/useFirestoreSync';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -21,6 +23,11 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  
+  // Initialize Firebase sync hooks
+  useAuthSync();
+  useFirestoreSync();
+
   const [loaded, error] = useFonts({
     Outfit_700Bold,
     Outfit_900Black,

@@ -41,6 +41,7 @@ const MAPPING = {
   'plus': 'add',
   'arrow.up.right': 'show-chart',
   'book.fill': 'book',
+  'tray': 'inbox',
 } as const satisfies IconMapping;
 
 
