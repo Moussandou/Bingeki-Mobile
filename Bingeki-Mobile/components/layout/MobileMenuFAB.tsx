@@ -1,3 +1,7 @@
+/**
+ * Floating Action Button (FAB) menu
+ * Provides quick access to navigation items with animated transitions
+ */
 import React, { useState } from 'react';
 import { StyleSheet, Pressable, View, Dimensions, ScrollView, TouchableWithoutFeedback, Platform } from 'react-native';
 import Animated, {
@@ -38,7 +42,7 @@ export function MobileMenuFAB() {
 
   const toggleMenu = () => {
     const nextState = !isOpen;
-    // Utilisation de Timing + Expo Out pour éviter l'oscillation (wobble)
+    // Timing + Expo Out to avoid wobble
     animation.value = withTiming(nextState ? 1 : 0, { 
       duration: 300,
       easing: Easing.out(Easing.exp) 
@@ -85,7 +89,7 @@ export function MobileMenuFAB() {
   };
 
   const handleItemPress = (route: string) => {
-    // Animation de fermeture synchronisée
+    // Synchronized close animation
     animation.value = withTiming(0, { 
       duration: 250,
       easing: Easing.out(Easing.exp) 
@@ -93,7 +97,7 @@ export function MobileMenuFAB() {
     
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     
-    // On attend un court délai pour laisser l'animation commencer
+    // Wait for animation start
     setTimeout(() => {
       setIsOpen(false);
       router.push(route as any);
@@ -102,7 +106,7 @@ export function MobileMenuFAB() {
 
   return (
     <>
-      {/* Blur Overlay Backdrop */}
+      {/* Backdrop */}
       <Animated.View style={[styles.fullScreenOverlay, overlayStyle]}>
         <TouchableWithoutFeedback onPress={toggleMenu}>
           <BlurView 
@@ -114,7 +118,7 @@ export function MobileMenuFAB() {
       </Animated.View>
 
       <View style={styles.container} pointerEvents="box-none">
-        {/* Menu Wrapper (Controlled by animation.value) */}
+        {/* Menu Items */}
         <Animated.View 
           style={[styles.menuWrapper, menuAnimatedStyle]} 
           pointerEvents={isOpen ? 'auto' : 'none'}
@@ -133,7 +137,7 @@ export function MobileMenuFAB() {
                     { 
                       backgroundColor: surfaceColor,
                       borderColor: borderHeavyColor,
-                      // Custom sharp shadow implementation
+                      // Sharp shadow
                       shadowColor: pressed ? primaryPink : '#000',
                       shadowOffset: { width: 4, height: 4 },
                       shadowOpacity: 1,
@@ -206,7 +210,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     borderRadius: 999,
-    borderWidth: 2, // Specification: 2px
+    borderWidth: 2,
     gap: 12,
     elevation: 4,
   },
@@ -215,7 +219,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   fabWrapper: {
-    // Sharp shadow for FAB
+    // Sharp shadow
     shadowColor: '#000',
     shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 1,
@@ -226,7 +230,7 @@ const styles = StyleSheet.create({
     width: 65,
     height: 65,
     borderRadius: 32.5,
-    borderWidth: 3, // Specification: 3px
+    borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -1,3 +1,7 @@
+/**
+ * User profile screen
+ * Displays user information, settings, and achievements
+ */
 import { View, Text } from 'react-native'
 import React from 'react'
 

@@ -1,3 +1,7 @@
+/**
+ * Generic modal screen
+ * Used for temporary overlays and focused user actions
+ */
 import { Link } from 'expo-router';
 import { StyleSheet } from 'react-native';
 

@@ -1,3 +1,7 @@
+/**
+ * User registration screen
+ * Handles new account creation
+ */
 import { View, Text } from 'react-native'
 import React from 'react'
 

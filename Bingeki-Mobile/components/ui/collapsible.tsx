@@ -1,3 +1,7 @@
+/**
+ * Collapsible section component
+ * Toggles visibility of child content with a chevron indicator
+ */
 import { PropsWithChildren, useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 

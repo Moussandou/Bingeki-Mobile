@@ -1,14 +1,14 @@
+/**
+ * Visual background system
+ * Provides manga-style effects like halftones and speedlines
+ */
 import React from 'react';
 import { StyleSheet, View, Dimensions, Image, Platform } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
-/**
- * Halftone pattern (Dots)
- * Uses a tiny 20x20 transparent PNG data URI with a single dot, tiled across the screen.
- */
-const DOT_PATTERN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAADBJREFUOE9jZKAQMFKon2HUw6iHUR8OUw9T3Y0M9DMMpB4mS+8E9TDSBv1IBA0FAwMANH8EAp7W8uIAAAAASUVORK5CYII='; // 20x20 tile with a 2px dot
+const DOT_PATTERN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAADBJREFUOE9jZKAQMFKon2HUw6iHUR8OUw9T3Y0M9DMMpB4mS+8E9TDSBv1IBA0FAwMANH8EAp7W8uIAAAAASUVORK5CYII=';
 
 export function MangaHalftone() {
   const dotsColor = useThemeColor({}, 'dots');
@@ -25,10 +25,7 @@ export function MangaHalftone() {
   );
 }
 
-/**
- * Speedlines (Conic lines)
- * Simulated using 36 thin lines rotated from the center.
- */
+
 export function MangaSpeedlines() {
   const color = useThemeColor({}, 'dots');
   const lines = Array.from({ length: 36 }, (_, i) => i);
@@ -50,7 +47,7 @@ export function MangaSpeedlines() {
               width: radius,
               transform: [
                 { rotate: `${line * 10}deg` },
-                { translateX: SCREEN_WIDTH * 0.2 } // Start lines further from center
+                { translateX: SCREEN_WIDTH * 0.2 }
               ]
             }
           ]}

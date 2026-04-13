@@ -1,3 +1,7 @@
+/**
+ * Generic card component
+ * Supports standard, glassmorphism, and manga brutalist variants
+ */
 import React from 'react';
 import { StyleSheet, Pressable, ViewStyle, ViewProps, View, Platform } from 'react-native';
 import Animated, { 
@@ -50,7 +54,7 @@ export function Card({
         { translateX: translationX.value },
         { translateY: translationY.value },
       ],
-      // iOS Shadow
+      // Native shadow
       shadowOffset: {
         width: shadowOffsetX.value,
         height: shadowOffsetY.value,
@@ -64,7 +68,7 @@ export function Card({
     scale.value = withSpring(0.98);
     
     if (isManga) {
-      translationX.value = withSpring(2); // Simulating press down
+      translationX.value = withSpring(2);
       translationY.value = withSpring(2);
       shadowOffsetX.value = withSpring(Shadows.brutalPressed.shadowOffset.width);
       shadowOffsetY.value = withSpring(Shadows.brutalPressed.shadowOffset.height);
@@ -87,7 +91,7 @@ export function Card({
 
   const Component = (hoverable || onPress) ? AnimatedPressable : Animated.View;
 
-  // Render the sharp shadow for Android or fallback to iOS native shadow
+  // Android shadow fallback
   const renderShadow = () => {
     if (!isManga || Platform.OS !== 'android') return null;
     
@@ -123,8 +127,7 @@ export function Card({
             borderWidth: isManga ? Borders.width : (isGlass ? 1 : 0),
             borderRadius: isManga ? Borders.mangaRadius : (isGlass ? 12 : 8),
             ...(Platform.OS === 'ios' ? (isManga ? Shadows.brutal : (isGlass ? Shadows.glass : {})) : {}),
-            shadowOpacity: 1, // Force full opacity for manga
-            shadowRadius: 0,  // Force hard edge for manga
+            shadowOpacity: 1, // Full opacity for manga
           },
           animatedStyle,
           style as ViewStyle,

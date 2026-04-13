@@ -1,3 +1,7 @@
+/**
+ * Animated waving emoji component
+ * Simple decorative animation for greeting sections
+ */
 import Animated from 'react-native-reanimated';
 
 export function HelloWave() {

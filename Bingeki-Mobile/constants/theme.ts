@@ -1,6 +1,6 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * Styled to match the Brutalist Manga Design System.
+ * Global design system tokens
+ * Defines colors, spacing, borders, shadows, and fonts for the Brutalist Manga system
  */
 
 import { Platform } from 'react-native';

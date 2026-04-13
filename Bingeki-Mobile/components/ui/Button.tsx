@@ -1,3 +1,7 @@
+/**
+ * Unified button component
+ * Supports multiple variants including manga-style brutalist design
+ */
 import React from 'react';
 import { StyleSheet, Pressable, ViewStyle, TextStyle, ActivityIndicator, View, StyleProp, Platform } from 'react-native';
 import Animated, { 
@@ -97,7 +101,7 @@ export function Button({
         { translateX: translationX.value },
         { translateY: translationY.value },
       ],
-      // iOS Shadow
+      // Native shadow
       shadowOffset: {
         width: shadowOffsetX.value,
         height: shadowOffsetY.value,
@@ -159,7 +163,7 @@ export function Button({
     }
   };
 
-  // Render the sharp shadow for Android or fallback to iOS native shadow
+  // Android shadow fallback
   const renderShadow = () => {
     if (!isManga || Platform.OS !== 'android' || disabled) return null;
     
@@ -197,7 +201,7 @@ export function Button({
             borderWidth: variant === 'outline' || isManga ? (isManga ? Borders.width : 2) : 0,
             borderRadius: isManga ? Borders.mangaRadius : 8,
             opacity: disabled ? 0.6 : 1,
-            // iOS Sharp Shadow
+            // Sharp shadow (iOS)
             ...(Platform.OS === 'ios' && isManga ? {
               shadowOpacity: 1,
               shadowRadius: 0,

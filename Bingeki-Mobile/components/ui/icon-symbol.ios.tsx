@@ -1,3 +1,7 @@
+/**
+ * iOS-specific icon component
+ * Uses native SF Symbols via expo-symbols
+ */
 import { SymbolView, SymbolViewProps, SymbolWeight } from 'expo-symbols';
 import { StyleProp, ViewStyle } from 'react-native';
 

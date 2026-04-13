@@ -1,5 +1,6 @@
 /**
- * Rank calculation logic ported from the web version.
+ * User rank calculation and styling
+ * Maps levels to ranks (F to SSS) and assigns representative colors
  */
 
 export type Rank = 'F' | 'E' | 'D' | 'C' | 'B' | 'A' | 'S' | 'SS' | 'SSS';

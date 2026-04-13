@@ -1,3 +1,7 @@
+/**
+ * Main dashboard screen
+ * Displays user progress, rank, and quick actions
+ */
 import React from 'react';
 import { StyleSheet, ScrollView, View, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
@@ -24,7 +28,7 @@ export default function DashboardScreen() {
   const borderHeavyColor = useThemeColor({}, 'borderHeavy');
   const borderColor = useThemeColor({}, 'border');
 
-  // Placeholder data - In a real app, this would come from Firebase
+  // User stats and progress data
   const userData = {
     username: 'TAKAX',
     level: 12,
@@ -42,7 +46,7 @@ export default function DashboardScreen() {
   const rank = calculateRank(userData.level);
   const rankColor = getRankColor(rank);
 
-  // Dicebear avatar - seed is username, background is primaryPink for brand consistency
+  // Generate avatar from username
   const avatarUrl = `https://api.dicebear.com/7.x/avataaars/svg?seed=${userData.username}&backgroundColor=FF2E63`;
 
   return (
@@ -52,7 +56,7 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.contentContainer}
         showsVerticalScrollIndicator={false}
       >
-        {/* Profile Card / QG */}
+        {/* Profile Card */}
         <Card variant="manga" style={styles.profileCard}>
           <View style={styles.avatarWrapper}>
             <View style={[styles.avatarShadow, { backgroundColor: primaryPink, borderColor: borderHeavyColor }]} />
@@ -149,7 +153,7 @@ export default function DashboardScreen() {
           </View>
         </Card>
 
-        {/* Spacing for FAB bottom nav visibility */}
+        {/* FAB spacing */}
         <View style={{ height: 120 }} />
       </ScrollView>
     </BackgroundSystem>

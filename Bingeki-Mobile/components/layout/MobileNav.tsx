@@ -1,3 +1,7 @@
+/**
+ * Custom bottom navigation bar
+ * Compact capsule-style tab bar with haptic feedback
+ */
 import React from 'react';
 import { View, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,7 +18,7 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
   const colorScheme = useColorScheme();
   const theme = Colors[colorScheme ?? 'light'];
 
-  // Filter routes to show only Dashboard, Discover, Library
+  // Only show specific routes
   const validRoutes = ['index', 'discover', 'library'];
   const routes = state.routes.filter(route => validRoutes.includes(route.name));
 
@@ -52,7 +56,7 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
               onPress={onPress}
               style={[
                 styles.tabItem,
-                isFocused && { backgroundColor: theme.text, borderRadius: 12 } // Box noire brutaliste pour le focus
+                isFocused && { backgroundColor: theme.text, borderRadius: 12 } // Active tab focus
               ]}
             >
               <IconSymbol 
@@ -71,18 +75,18 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 30,             // Flotte au-dessus du bas
+    bottom: 30,             // Floating position
     alignSelf: 'center',
-    width: '75%',           // Barre compacte
+    width: '75%',           // Compact width
     height: 70,
-    borderRadius: 35,       // Style "capsule"
+    borderRadius: 35,       // Capsule style
     borderWidth: 3,         // Outline manga
-    // Ombre déportée (Hard shadow)
+    // Hard shadow
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 1,
     shadowRadius: 0,
-    elevation: 8,           // Fallback Android
+    elevation: 8,           // Android fallback
   },
   content: {
     flex: 1,

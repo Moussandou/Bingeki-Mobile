@@ -1,3 +1,7 @@
+/**
+ * Themed view component
+ * Container with automatic light/dark mode background support
+ */
 import { View, type ViewProps, StyleSheet } from 'react-native';
 
 import { useThemeColor } from '@/hooks/use-theme-color';

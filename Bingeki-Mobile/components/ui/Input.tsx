@@ -1,3 +1,7 @@
+/**
+ * Form input component
+ * Features glass-style borders and glow effects on focus
+ */
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, TextInputProps, ViewStyle } from 'react-native';
 import { Colors, Fonts, Spacing } from '@/constants/theme';
@@ -35,7 +39,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
     const getBorderColor = () => {
       if (error) return errorColor;
       if (isFocused) return primaryColor;
-      return 'rgba(0, 0, 0, 0.1)'; // glass border
+      return 'rgba(0, 0, 0, 0.1)';
     };
 
     const getBackgroundColor = () => {
@@ -57,7 +61,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
         return {
           shadowColor: primaryGlowColor,
           shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 1, // Full opacity as glow color handles alpha
+          shadowOpacity: 1,
           shadowRadius: 2,
           elevation: 2,
         };
@@ -115,7 +119,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 4,
     minHeight: 48,
-    // "glass" basic container is required to hold shadow
     backgroundColor: 'transparent',
   },
   input: {
