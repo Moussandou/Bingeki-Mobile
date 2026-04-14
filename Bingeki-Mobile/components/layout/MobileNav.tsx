@@ -3,27 +3,21 @@
  * Compact capsule-style tab bar with haptic feedback
  */
 import React from 'react';
-import { View, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { View, StyleSheet, Pressable } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs';
 import * as Haptics from 'expo-haptics';
 import { IconSymbol } from '../ui/icon-symbol';
-import { Colors, Spacing } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-const { width } = Dimensions.get('window');
 
 export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
-  const colorScheme = useColorScheme();
-  const theme = Colors[colorScheme ?? 'light'];
 
   // Only show specific routes
   const validRoutes = ['index', 'discover', 'library'];
   const routes = state.routes.filter(route => validRoutes.includes(route.name));
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.surface, borderColor: theme.borderHeavy }]}>
+    <View style={styles.container}>
       <View style={styles.content}>
         {routes.map((route, index) => {
           const isFocused = state.index === state.routes.findIndex(r => r.key === route.key);
@@ -56,13 +50,13 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
               onPress={onPress}
               style={[
                 styles.tabItem,
-                isFocused && { backgroundColor: theme.text, borderRadius: 12 } // Active tab focus
+                isFocused && styles.activeTab
               ]}
             >
-              <IconSymbol 
-                name={getIcon() as any} 
-                size={24} 
-                color={isFocused ? theme.background : theme.text} 
+              <IconSymbol
+                name={getIcon() as any}
+                size={24}
+                color={isFocused ? '#FFFFFF' : 'rgba(255, 255, 255, 0.6)'}
               />
             </Pressable>
           );
@@ -75,18 +69,19 @@ export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps)
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 30,             // Floating position
+    bottom: 30,
     alignSelf: 'center',
-    width: '75%',           // Compact width
+    width: '75%',
     height: 70,
-    borderRadius: 35,       // Capsule style
-    borderWidth: 3,         // Outline manga
-    // Hard shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
+    borderRadius: 35,
+    borderWidth: 3,
+    borderColor: '#000000',
+    backgroundColor: '#FF2E63',
+    shadowColor: '#000000',
+    shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 0,
-    elevation: 8,           // Android fallback
+    elevation: 0,
   },
   content: {
     flex: 1,
@@ -101,5 +96,9 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     alignItems: 'center',
     justifyContent: 'center',
-  }
+  },
+  activeTab: {
+    backgroundColor: '#000000',
+    borderRadius: 25,
+  },
 });
