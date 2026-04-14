@@ -1,17 +1,13 @@
-/**
- * Content discovery screen
- * Browse and search for new anime and manga using the shared API proxy
- */
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, TextInput, FlatList, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
-import { Image } from 'expo-image';
+import { useState, useEffect } from 'react';
+import { StyleSheet, View, TextInput, FlatList, ActivityIndicator, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedText } from '@/components/themed-text';
-import { Card } from '@/components/ui/Card';
-import { Spacing, Colors, Fonts, Borders } from '@/constants/theme';
-import { useThemeColor } from '@/hooks/use-theme-color';
 import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { AnimeCard } from '@/components/ui/AnimeCard';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Spacing, Fonts } from '@/constants/theme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { searchWorks, getTopWorks, getSeasonalAnime, type JikanResult } from '@/services/api';
 
 export default function DiscoverScreen() {
@@ -20,6 +16,7 @@ export default function DiscoverScreen() {
     const borderHeavyColor = useThemeColor({}, 'borderHeavy');
     const surfaceColor = useThemeColor({}, 'surface');
     const textDimColor = useThemeColor({}, 'textDim');
+    const textColor = useThemeColor({}, 'text');
 
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<JikanResult[]>([]);
@@ -36,11 +33,11 @@ export default function DiscoverScreen() {
         setLoading(true);
         try {
             const [top, season] = await Promise.all([
-                getTopWorks('anime', 10),
-                getSeasonalAnime(10)
+                getTopWorks('anime', 15),
+                getSeasonalAnime(15)
             ]);
-            setTrending(top);
-            setSeasonal(season);
+            setTrending(Array.from(new Map(top.map(item => [item.mal_id, item])).values()));
+            setSeasonal(Array.from(new Map(season.map(item => [item.mal_id, item])).values()));
         } catch (error) {
             console.error('Discovery load error:', error);
         } finally {
@@ -53,7 +50,7 @@ export default function DiscoverScreen() {
         setSearching(true);
         try {
             const results = await searchWorks(searchQuery, 'anime');
-            setSearchResults(results);
+            setSearchResults(Array.from(new Map(results.map(item => [item.mal_id, item])).values()));
         } catch (error) {
             console.error('Search error:', error);
         } finally {
@@ -61,84 +58,72 @@ export default function DiscoverScreen() {
         }
     };
 
-    const renderHorizontalItem = ({ item }: { item: JikanResult }) => (
-        <TouchableOpacity 
-            style={styles.horizontalCard}
-            onPress={() => router.push(`/details/${item.mal_id}`)}
-        >
-            <View style={[styles.imageWrapper, { borderColor: borderHeavyColor }]}>
-                <Image source={item.images.jpg.image_url} style={styles.cardContentImage} />
-                <View style={[styles.scoreBadge, { backgroundColor: primaryPink }]}>
-                    <ThemedText style={styles.scoreText}>{item.score || 'N/A'}</ThemedText>
-                </View>
-            </View>
-            <ThemedText numberOfLines={2} style={styles.cardTitle}>{item.title}</ThemedText>
-        </TouchableOpacity>
-    );
-
     return (
         <BackgroundSystem>
+            <ScreenHeader title="DÉCOUVRIR" subtitle="ANIME · MANGA · WEBTOON" />
             <View style={styles.container}>
-                {/* Search Header */}
-                <View style={styles.header}>
-                    <ThemedText style={styles.title}>DÉCOUVRIR</ThemedText>
-                    <View style={[styles.searchBar, { borderColor: borderHeavyColor, backgroundColor: surfaceColor }]}>
-                        <IconSymbol name="magnifyingglass" size={20} color={textDimColor} />
-                        <TextInput
-                            placeholder="RECHERCHER UN ANIME..."
-                            placeholderTextColor={textDimColor}
-                            style={[styles.searchInput, { color: Colors.light.text }]}
-                            value={searchQuery}
-                            onChangeText={setSearchQuery}
-                            onSubmitEditing={handleSearch}
-                            returnKeyType="search"
-                        />
-                        {searching && <ActivityIndicator size="small" color={primaryPink} />}
-                    </View>
+                <View style={[styles.searchBar, { borderColor: borderHeavyColor, backgroundColor: surfaceColor }]}>
+                    <IconSymbol name="magnifyingglass" size={20} color={textDimColor} />
+                    <TextInput
+                        placeholder="RECHERCHER UN ANIME..."
+                        placeholderTextColor={textDimColor}
+                        style={[styles.searchInput, { color: textColor }]}
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        onSubmitEditing={handleSearch}
+                        returnKeyType="search"
+                    />
+                    {searching && <ActivityIndicator size="small" color={primaryPink} />}
                 </View>
 
                 <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                    {searchQuery.length > 0 && searchResults.length > 0 ? (
+                    {searchQuery.length > 0 && searchResults.length > 0 && (
                         <View style={styles.section}>
-                            <ThemedText style={styles.sectionTitle}>RÉSULTATS</ThemedText>
+                            <SectionHeader title="RÉSULTATS" count={searchResults.length} style={styles.sectionHeader} />
                             <FlatList
                                 data={searchResults}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={renderHorizontalItem}
-                                keyExtractor={(item) => `search-${item.mal_id}`}
+                                renderItem={({ item }) => (
+                                    <AnimeCard item={item} onPress={() => router.push(`/details/${item.mal_id}`)} />
+                                )}
+                                keyExtractor={(item, index) => `search-${item.mal_id}-${index}`}
                                 contentContainerStyle={styles.horizontalList}
                             />
                         </View>
-                    ) : null}
+                    )}
 
                     <View style={styles.section}>
-                        <ThemedText style={styles.sectionTitle}>TENDANCES</ThemedText>
+                        <SectionHeader title="TENDANCES" count={trending.length} style={styles.sectionHeader} />
                         {loading ? (
-                            <ActivityIndicator color={primaryPink} />
+                            <ActivityIndicator color={primaryPink} style={styles.loader} />
                         ) : (
                             <FlatList
                                 data={trending}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={renderHorizontalItem}
-                                keyExtractor={(item) => `trending-${item.mal_id}`}
+                                renderItem={({ item }) => (
+                                    <AnimeCard item={item} onPress={() => router.push(`/details/${item.mal_id}`)} />
+                                )}
+                                keyExtractor={(item, index) => `trending-${item.mal_id}-${index}`}
                                 contentContainerStyle={styles.horizontalList}
                             />
                         )}
                     </View>
 
                     <View style={styles.section}>
-                        <ThemedText style={styles.sectionTitle}>SAISON ACTUELLE</ThemedText>
+                        <SectionHeader title="SAISON ACTUELLE" count={seasonal.length} style={styles.sectionHeader} />
                         {loading ? (
-                            <ActivityIndicator color={primaryPink} />
+                            <ActivityIndicator color={primaryPink} style={styles.loader} />
                         ) : (
                             <FlatList
                                 data={seasonal}
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
-                                renderItem={renderHorizontalItem}
-                                keyExtractor={(item) => `seasonal-${item.mal_id}`}
+                                renderItem={({ item }) => (
+                                    <AnimeCard item={item} onPress={() => router.push(`/details/${item.mal_id}`)} />
+                                )}
+                                keyExtractor={(item, index) => `seasonal-${item.mal_id}-${index}`}
                                 contentContainerStyle={styles.horizontalList}
                             />
                         )}
@@ -152,24 +137,22 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 80,
-    },
-    header: {
-        paddingHorizontal: Spacing.md,
-        marginBottom: Spacing.lg,
-    },
-    title: {
-        fontSize: 32,
-        fontFamily: Fonts.heading,
-        marginBottom: Spacing.md,
+        paddingTop: 12,
     },
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: Borders.width,
+        borderWidth: 3,
+        marginHorizontal: Spacing.md,
+        marginBottom: Spacing.md,
         paddingHorizontal: Spacing.md,
-        height: 50,
+        height: 52,
         gap: 10,
+        shadowColor: '#000000',
+        shadowOffset: { width: 3, height: 3 },
+        shadowOpacity: 1,
+        shadowRadius: 0,
+        elevation: 0,
     },
     searchInput: {
         flex: 1,
@@ -177,51 +160,20 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     scrollContent: {
-        paddingBottom: 100,
+        paddingBottom: 120,
     },
     section: {
         marginBottom: Spacing.xl,
     },
-    sectionTitle: {
-        fontSize: 18,
-        fontFamily: Fonts.heading,
-        marginLeft: Spacing.md,
-        marginBottom: Spacing.sm,
+    sectionHeader: {
+        marginHorizontal: Spacing.md,
+        marginBottom: Spacing.md,
     },
     horizontalList: {
         paddingHorizontal: Spacing.md,
         gap: Spacing.md,
     },
-    horizontalCard: {
-        width: 130,
+    loader: {
+        marginTop: Spacing.lg,
     },
-    imageWrapper: {
-        width: 130,
-        height: 190,
-        borderWidth: 2,
-        overflow: 'hidden',
-        position: 'relative',
-        marginBottom: 8,
-    },
-    cardContentImage: {
-        width: '100%',
-        height: '100%',
-    },
-    scoreBadge: {
-        position: 'absolute',
-        top: 0,
-        right: 0,
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-    },
-    scoreText: {
-        color: '#FFF',
-        fontFamily: Fonts.headingBold,
-        fontSize: 10,
-    },
-    cardTitle: {
-        fontSize: 12,
-        fontFamily: Fonts.bodyBold,
-        lineHeight: 16,
-    }
 });
