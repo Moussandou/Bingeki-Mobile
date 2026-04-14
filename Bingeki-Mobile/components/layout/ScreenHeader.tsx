@@ -3,7 +3,7 @@
  * Red banner with title and safe area support
  */
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, ViewStyle, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Fonts, Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
@@ -23,6 +23,11 @@ export function ScreenHeader({ title, subtitle, rightElement, style }: ScreenHea
   return (
     <View style={[styles.container, { paddingTop: insets.top + 10, borderBottomColor: borderColor }, style]}>
       <View style={styles.row}>
+        <Image 
+          source={require('@/assets/images/logo.png')} 
+          style={styles.logoIcon} 
+          resizeMode="contain"
+        />
         <View style={styles.titleBlock}>
           <Text style={styles.title}>{title}</Text>
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
@@ -44,7 +49,12 @@ const styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
+    gap: 12,
+  },
+  logoIcon: {
+    width: 32,
+    height: 32,
   },
   titleBlock: {
     flex: 1,

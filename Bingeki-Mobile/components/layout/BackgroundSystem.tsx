@@ -1,6 +1,7 @@
 /**
  * Visual background system
  * Manga-style effects including halftones and speedlines
+ * Acts as a global overlay to ensure visibility on all pages
  */
 import React from 'react';
 import { StyleSheet, View, Dimensions, Image, Platform } from 'react-native';
@@ -17,7 +18,7 @@ export function MangaHalftone() {
   const opacity = useThemeColor({}, 'halftoneOpacity');
 
   return (
-    <View style={[StyleSheet.absoluteFill, { opacity }]} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { opacity, zIndex: 100 }]} pointerEvents="none">
       <Image
         source={{ uri: DOT_PATTERN }}
         style={[
@@ -41,7 +42,7 @@ export function MangaSpeedlines() {
   const radius = Math.max(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   return (
-    <View style={[StyleSheet.absoluteFill, { opacity: 0.04 }]} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { opacity: 0.045, zIndex: 99 }]} pointerEvents="none">
       {lines.map((line) => (
         <View
           key={line}
@@ -54,7 +55,7 @@ export function MangaSpeedlines() {
               width: radius,
               transform: [
                 { rotate: `${line * 10}deg` },
-                { translateX: SCREEN_WIDTH * 0.25 }
+                { translateX: SCREEN_WIDTH * 0.15 }
               ]
             }
           ]}
@@ -75,7 +76,7 @@ export function MangaLabels() {
   ];
 
   return (
-    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { zIndex: 98 }]} pointerEvents="none">
       {labels.map((label, i) => (
         <View 
           key={i} 
@@ -87,7 +88,7 @@ export function MangaLabels() {
               left: label.left,
               right: label.right,
               transform: [{ rotate: label.rotate }],
-              opacity: 0.035,
+              opacity: 0.04,
             }
           ]}
         >
@@ -111,12 +112,15 @@ export function BackgroundSystem({ children }: { children?: React.ReactNode }) {
 
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
-      <MangaHalftone />
-      <MangaSpeedlines />
-      <MangaLabels />
+      {/* Base content (screens) */}
       <View style={styles.content}>
         {children}
       </View>
+
+      {/* Overlays (halftone, speedlines, labels) */}
+      <MangaHalftone />
+      <MangaSpeedlines />
+      <MangaLabels />
     </View>
   );
 }
@@ -124,7 +128,6 @@ export function BackgroundSystem({ children }: { children?: React.ReactNode }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    overflow: 'hidden',
   },
   fill: {
     width: '100%',
@@ -132,7 +135,6 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    zIndex: 1,
   },
   speedline: {
     position: 'absolute',

@@ -11,7 +11,8 @@ import {
   ScrollView, 
   Dimensions, 
   Alert,
-  TouchableOpacity
+  TouchableOpacity,
+  Image
 } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -81,6 +82,11 @@ export default function LoginScreen() {
                     <View style={styles.content}>
 
                         <View style={styles.header}>
+                            <Image 
+                                source={require('@/assets/images/logo.png')} 
+                                style={styles.logoImage} 
+                                resizeMode="contain"
+                            />
                             <View style={[styles.logoBox, { borderColor: borderHeavyColor }]}>
                                 <ThemedText style={styles.logoText}>BINGEKI</ThemedText>
                                 <View style={[styles.cornerBox, { backgroundColor: primaryPink }]} />
@@ -193,7 +199,12 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginBottom: 40,
+        marginBottom: 30,
+    },
+    logoImage: {
+        width: 120,
+        height: 120,
+        marginBottom: 10,
     },
     logoBox: {
         borderWidth: 6,

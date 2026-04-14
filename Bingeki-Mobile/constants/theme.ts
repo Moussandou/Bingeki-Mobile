@@ -26,7 +26,8 @@ export const Colors = {
     primaryGlow: 'rgba(255, 46, 99, 0.5)',
     error: '#ff3333',
     dots: '#000000',
-    halftoneOpacity: 0.18,
+    halftoneOpacity: 0.1,
+    speedlinesOpacity: 0.05,
   },
   dark: {
     text: '#e0e0e0',
@@ -45,7 +46,8 @@ export const Colors = {
     primaryGlow: 'rgba(255, 46, 99, 0.5)',
     error: '#ff3333',
     dots: '#ffffff',
-    halftoneOpacity: 0.12,
+    halftoneOpacity: 0.08,
+    speedlinesOpacity: 0.04,
   },
 };
 
