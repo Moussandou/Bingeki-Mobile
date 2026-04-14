@@ -8,6 +8,8 @@ import { useRouter } from 'expo-router';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { AnimeCard } from '@/components/ui/AnimeCard';
+import { Card } from '@/components/ui/Card';
+import { Button } from '@/components/ui/Button';
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Spacing, Fonts } from '@/constants/theme';
@@ -56,21 +58,32 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.licenseCard}>
+        <Card variant="manga" style={styles.licenseCard}>
           <View style={styles.licenseHeader}>
-            <View>
-              <ThemedText style={styles.licenseLabel}>HUNTER LICENSE</ThemedText>
-              <ThemedText style={styles.licenseName}>{username}</ThemedText>
+            <View style={styles.profileSection}>
+              <View style={[styles.avatarBox, { borderColor: borderHeavyColor }]}>
+                 {/* Avatar placeholder matching screenshot style */}
+                 <IconSymbol name="person.fill" size={40} color={borderHeavyColor} />
+              </View>
+              <View style={styles.nameBlock}>
+                <ThemedText style={styles.licenseName}>{username}</ThemedText>
+                <View style={styles.rankBadge}>
+                   <ThemedText style={styles.rankBadgeText}>RANK {rank}</ThemedText>
+                </View>
+              </View>
             </View>
-            <View style={styles.rankBox}>
-              <ThemedText style={styles.rankLabel}>RANG</ThemedText>
-              <ThemedText style={styles.rankValue}>{rank}</ThemedText>
+            
+            <View style={styles.statSummary}>
+               <View style={styles.miniStat}>
+                  <IconSymbol name="flame.fill" size={12} color={primaryPink} />
+                  <ThemedText style={styles.miniStatValue}>{streak}</ThemedText>
+               </View>
             </View>
           </View>
 
           <View style={styles.xpSection}>
             <View style={styles.xpLabels}>
-              <ThemedText style={styles.xpLabel}>LVL {level}</ThemedText>
+              <ThemedText style={styles.xpLabel}>NIV. {level}</ThemedText>
               <ThemedText style={styles.xpLabel}>{xp} / {xpToNextLevel} XP</ThemedText>
             </View>
             <View style={styles.xpBarTrack}>
@@ -80,21 +93,35 @@ export default function DashboardScreen() {
 
           <View style={styles.statsRow}>
             <View style={styles.statBox}>
-              <ThemedText style={styles.statValue}>{streak}</ThemedText>
-              <ThemedText style={styles.statLabel}>STREAK</ThemedText>
+              <ThemedText style={styles.statLabel}>OBJECTIF</ThemedText>
+              <ThemedText style={styles.statValue}>3 <ThemedText style={styles.statSub}>/ 3</ThemedText></ThemedText>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statBox}>
-              <ThemedText style={styles.statValue}>{works.length}</ThemedText>
-              <ThemedText style={styles.statLabel}>ŒUVRES</ThemedText>
+              <ThemedText style={styles.statLabel}>TOTAL</ThemedText>
+              <View style={styles.totalRow}>
+                <View style={styles.totalItem}>
+                    <ThemedText style={styles.totalValue}>381</ThemedText>
+                    <ThemedText style={styles.totalSub}>CHAPS</ThemedText>
+                </View>
+                <View style={styles.totalItem}>
+                    <ThemedText style={styles.totalValue}>40</ThemedText>
+                    <ThemedText style={styles.totalSub}>EPS</ThemedText>
+                </View>
+              </View>
             </View>
             <View style={styles.statDivider} />
             <View style={styles.statBox}>
-              <ThemedText style={styles.statValue}>{level}</ThemedText>
-              <ThemedText style={styles.statLabel}>NIVEAU</ThemedText>
+              <Button 
+                title="+ DÉCOUVRIR" 
+                size="sm" 
+                variant="manga" 
+                onPress={() => router.push('/discover')}
+                style={styles.ctaButton}
+              />
             </View>
           </View>
-        </View>
+        </Card>
 
         <View style={styles.section}>
           <SectionHeader title="LE Q.G." count={Math.min(trending.length, 8)} style={styles.sectionHeader} />
@@ -153,107 +180,146 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 120,
   },
-  // Hunter License Card
   licenseCard: {
     marginHorizontal: Spacing.md,
     marginBottom: Spacing.xl,
-    backgroundColor: '#FF2E63',
-    borderWidth: 3,
-    borderColor: '#000000',
-    borderRadius: 6,
-    padding: 14,
-    shadowColor: '#000000',
-    shadowOffset: { width: 5, height: 5 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 0,
+    padding: 18,
+    backgroundColor: '#FFFFFF',
   },
   licenseHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 14,
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  licenseLabel: {
-    fontSize: 8,
-    fontFamily: Fonts.bodyBold,
-    color: 'rgba(0,0,0,0.5)',
-    letterSpacing: 2,
+  profileSection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 15,
+  },
+  avatarBox: {
+    width: 70,
+    height: 70,
+    borderWidth: 3,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  nameBlock: {
+    gap: 4,
   },
   licenseName: {
-    fontSize: 20,
+    fontSize: 22,
     fontFamily: Fonts.heading,
     color: '#000000',
-    letterSpacing: 1,
+    letterSpacing: 0.5,
+    textTransform: 'uppercase',
   },
-  rankBox: {
-    alignItems: 'flex-end',
+  rankBadge: {
+    backgroundColor: '#E8F5E9',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    alignSelf: 'flex-start',
+    borderWidth: 1,
+    borderColor: '#4CAF50',
   },
-  rankLabel: {
+  rankBadgeText: {
     fontSize: 8,
     fontFamily: Fonts.bodyBold,
-    color: 'rgba(0,0,0,0.5)',
-    letterSpacing: 2,
+    color: '#4CAF50',
   },
-  rankValue: {
-    fontSize: 28,
+  statSummary: {
+    alignItems: 'flex-end',
+  },
+  miniStat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    borderWidth: 2,
+    borderColor: '#000',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  miniStatValue: {
+    fontSize: 14,
     fontFamily: Fonts.heading,
-    color: '#000000',
-    letterSpacing: 2,
   },
   xpSection: {
-    marginBottom: 14,
+    marginBottom: 20,
   },
   xpLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   xpLabel: {
-    fontSize: 9,
-    fontFamily: Fonts.bodyBold,
-    color: 'rgba(0,0,0,0.6)',
-    letterSpacing: 1,
+    fontSize: 10,
+    fontFamily: Fonts.headingBold,
+    letterSpacing: 0.5,
   },
   xpBarTrack: {
-    height: 8,
-    backgroundColor: 'rgba(0,0,0,0.2)',
-    borderRadius: 2,
+    height: 10,
+    backgroundColor: 'transparent',
+    borderWidth: 1.5,
+    borderColor: '#000',
     overflow: 'hidden',
   },
   xpBarFill: {
     height: '100%',
-    backgroundColor: '#000000',
-    borderRadius: 2,
+    backgroundColor: '#FF2E63',
   },
   statsRow: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(0,0,0,0.2)',
-    paddingTop: 12,
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    borderTopWidth: 2,
+    borderTopColor: '#000',
+    paddingTop: 15,
   },
   statBox: {
-    alignItems: 'center',
+    flex: 1,
+  },
+  statLabel: {
+    fontSize: 8,
+    fontFamily: Fonts.bodyBold,
+    color: 'rgba(0,0,0,0.4)',
+    letterSpacing: 1.5,
+    marginBottom: 4,
   },
   statValue: {
     fontSize: 18,
     fontFamily: Fonts.heading,
     color: '#000000',
   },
-  statLabel: {
-    fontSize: 7,
+  statSub: {
+    fontSize: 12,
+    color: 'rgba(0,0,0,0.3)',
+  },
+  totalRow: {
+    flexDirection: 'row',
+    gap: 15,
+  },
+  totalItem: {
+    alignItems: 'center',
+  },
+  totalValue: {
+    fontSize: 16,
+    fontFamily: Fonts.heading,
+  },
+  totalSub: {
+    fontSize: 8,
     fontFamily: Fonts.bodyBold,
-    color: 'rgba(0,0,0,0.5)',
-    letterSpacing: 1,
+    opacity: 0.4,
   },
   statDivider: {
-    width: 1,
-    height: 28,
-    backgroundColor: 'rgba(0,0,0,0.2)',
+    width: 2,
+    height: 35,
+    backgroundColor: '#000',
+    marginHorizontal: 10,
   },
-  // Sections
+  ctaButton: {
+    borderWidth: 2,
+  },
   section: {
     marginBottom: Spacing.xl,
   },

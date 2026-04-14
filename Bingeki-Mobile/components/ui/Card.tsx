@@ -3,7 +3,8 @@
  * Supports standard, glassmorphism, and manga brutalist variants
  */
 import React from 'react';
-import { StyleSheet, Pressable, ViewStyle, ViewProps, View, Platform } from 'react-native';
+import { StyleSheet, Pressable, ViewStyle, StyleProp, ViewProps, View, Platform } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
@@ -11,6 +12,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Borders, Shadows } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
+
+import { BrutalView } from './BrutalView';
 
 export type CardVariant = 'default' | 'manga';
 
@@ -21,8 +24,6 @@ export type CardProps = ViewProps & {
   onPress?: () => void;
 };
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 export function Card({ 
   children, 
   variant = 'default',
@@ -31,124 +32,73 @@ export function Card({
   style, 
   ...props 
 }: CardProps) {
-  const isManga = variant === 'manga' || variant === 'default'; // Everything is brutal now
-
+  const [isPressed, setIsPressed] = React.useState(false);
   const borderColor = useThemeColor({}, 'borderHeavy');
   const backgroundColor = useThemeColor({}, 'surface');
-  const primaryColor = useThemeColor({}, 'primary');
   
-  const scale = useSharedValue(1);
-  const translationX = useSharedValue(0);
-  const translationY = useSharedValue(0);
-  
-  const shadowSettings = Shadows.brutal;
-  const shadowOffsetX = useSharedValue(shadowSettings.shadowOffset.width);
-  const shadowOffsetY = useSharedValue(shadowSettings.shadowOffset.height);
-  const shadowColor = useSharedValue(shadowSettings.shadowColor);
+  // Extract layout vs card styles
+  const flattenedStyle = StyleSheet.flatten(style || {});
+  const {
+      margin, marginHorizontal, marginVertical, marginTop, marginBottom, marginLeft, marginRight,
+      flex, flexGrow, flexShrink, flexBasis,
+      width, height, minWidth, minHeight, maxWidth, maxHeight,
+      position, top, left, right, bottom, alignSelf,
+      ...cardStyles
+  } = flattenedStyle as any;
 
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      transform: [
-        { scale: scale.value },
-        { translateX: translationX.value },
-        { translateY: translationY.value },
-      ],
-      // Native shadow (iOS)
-      shadowOffset: {
-        width: shadowOffsetX.value,
-        height: shadowOffsetY.value,
-      },
-      shadowColor: shadowColor.value,
-    };
-  });
+  const layoutStyles = {
+      margin, marginHorizontal, marginVertical, marginTop, marginBottom, marginLeft, marginRight,
+      flex, flexGrow, flexShrink, flexBasis,
+      width, height, minWidth, minHeight, maxWidth, maxHeight,
+      position, top, left, right, bottom, alignSelf,
+  };
 
   const handlePressIn = () => {
-    if (!hoverable) return;
-    scale.value = withSpring(0.98);
-    
-    translationX.value = withSpring(2);
-    translationY.value = withSpring(2);
-    shadowOffsetX.value = withSpring(Shadows.brutalPressed.shadowOffset.width);
-    shadowOffsetY.value = withSpring(Shadows.brutalPressed.shadowOffset.height);
-    shadowColor.value = primaryColor;
+    if (!hoverable && !onPress) return;
+    setIsPressed(true);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const handlePressOut = () => {
-    if (!hoverable) return;
-    scale.value = withSpring(1);
-    
-    translationX.value = withSpring(0);
-    translationY.value = withSpring(0);
-    shadowOffsetX.value = withSpring(Shadows.brutal.shadowOffset.width);
-    shadowOffsetY.value = withSpring(Shadows.brutal.shadowOffset.height);
-    shadowColor.value = Shadows.brutal.shadowColor;
+    if (!hoverable && !onPress) return;
+    setIsPressed(false);
   };
 
-  const Component = (hoverable || onPress) ? AnimatedPressable : Animated.View;
-
-  const androidShadowStyle = useAnimatedStyle(() => {
-    if (Platform.OS !== 'android') return {};
-    return {
-      backgroundColor: shadowColor.value as any,
-      top: shadowOffsetY.value,
-      left: shadowOffsetX.value,
-      right: -shadowOffsetX.value,
-      bottom: -shadowOffsetY.value,
-      borderRadius: Borders.mangaRadius,
-    };
-  });
-
-
-  const renderShadow = () => {
-    if (Platform.OS !== 'android') return null;
-    
-    return (
-      <Animated.View
-        style={[
-          styles.androidShadow,
-          androidShadowStyle
+  const renderContent = () => (
+    <BrutalView
+        isPressed={isPressed}
+        style={layoutStyles as StyleProp<ViewStyle>}
+        contentStyle={[
+            {
+                backgroundColor: cardStyles.backgroundColor || backgroundColor,
+                borderColor: cardStyles.borderColor || borderColor,
+                borderWidth: cardStyles.borderWidth || Borders.width,
+                borderRadius: cardStyles.borderRadius ?? Borders.mangaRadius,
+                padding: cardStyles.padding || 16,
+            },
+            cardStyles
         ]}
-      />
-    );
-  };
-
-  return (
-    <View style={styles.shadowWrapper}>
-      {renderShadow()}
-      <Component
-        onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        style={[
-          styles.card,
-          {
-            backgroundColor,
-            borderColor,
-            borderWidth: Borders.width,
-            borderRadius: Borders.mangaRadius,
-          },
-          animatedStyle,
-          style as ViewStyle,
-        ]}
-        {...props as any}
-      >
+    >
         {children}
-      </Component>
-    </View>
+    </BrutalView>
   );
+
+  if (hoverable || onPress) {
+      return (
+        <Pressable
+            onPress={onPress}
+            onPressIn={handlePressIn}
+            onPressOut={handlePressOut}
+            {...props}
+        >
+            {renderContent()}
+        </Pressable>
+      );
+  }
+
+  return renderContent();
 }
 
 const styles = StyleSheet.create({
-  shadowWrapper: {
-    position: 'relative',
-    overflow: 'visible',
-  },
-  androidShadow: {
-    position: 'absolute',
-    zIndex: -1,
-  },
-  card: {
-    padding: 16,
-    overflow: 'visible',
-  },
+  // Moved logic to BrutalView
 });

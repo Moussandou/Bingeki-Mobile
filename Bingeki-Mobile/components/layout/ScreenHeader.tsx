@@ -24,12 +24,11 @@ export function ScreenHeader({ title, subtitle, rightElement, style }: ScreenHea
     <View style={[styles.container, { paddingTop: insets.top + 10, borderBottomColor: borderColor }, style]}>
       <View style={styles.row}>
         <Image 
-          source={require('@/assets/images/logo.png')} 
-          style={styles.logoIcon} 
+          source={require('@/assets/images/icon.png')} 
+          style={styles.logoHeader} 
           resizeMode="contain"
         />
         <View style={styles.titleBlock}>
-          <Text style={styles.title}>{title}</Text>
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
         {rightElement}
@@ -52,9 +51,9 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
     gap: 12,
   },
-  logoIcon: {
-    width: 32,
-    height: 32,
+  logoHeader: {
+    width: 36,
+    height: 36,
   },
   titleBlock: {
     flex: 1,

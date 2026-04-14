@@ -17,17 +17,23 @@ interface AnimeCardProps {
 export function AnimeCard({ item, onPress, width = 130 }: AnimeCardProps) {
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={{ width }}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={item.images?.jpg?.image_url}
-          style={styles.image}
-          contentFit="cover"
-        />
-        {item.score != null ? (
-          <View style={styles.scoreBadge}>
-            <Text style={styles.scoreText}>{item.score}</Text>
-          </View>
-        ) : null}
+      <View style={styles.shadowOuter}>
+        {/* SHADOW LAYER */}
+        <View style={styles.brutalShadow} />
+        
+        {/* CONTENT LAYER */}
+        <View style={styles.imageContainer}>
+          <Image
+            source={item.images?.jpg?.image_url}
+            style={styles.image}
+            contentFit="cover"
+          />
+          {item.score != null ? (
+            <View style={styles.scoreBadge}>
+              <Text style={styles.scoreText}>{item.score}</Text>
+            </View>
+          ) : null}
+        </View>
       </View>
       <ThemedText numberOfLines={2} style={styles.title}>{item.title}</ThemedText>
     </TouchableOpacity>
@@ -35,18 +41,24 @@ export function AnimeCard({ item, onPress, width = 130 }: AnimeCardProps) {
 }
 
 const styles = StyleSheet.create({
-  imageContainer: {
+  shadowOuter: {
     height: 185,
+    marginBottom: 12,
+    position: 'relative',
+  },
+  brutalShadow: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: '#000000',
+    transform: [{ translateX: 4 }, { translateY: 4 }],
+  },
+  imageContainer: {
+    width: '100%',
+    height: '100%',
     borderWidth: 3,
     borderColor: '#000000',
+    backgroundColor: '#000', // Image loading placeholder
     overflow: 'hidden',
-    position: 'relative',
-    marginBottom: 6,
-    shadowColor: '#000000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 0,
   },
   image: {
     width: '100%',
@@ -72,5 +84,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontFamily: 'Inter_700Bold',
     lineHeight: 15,
+    marginTop: 2,
   },
 });

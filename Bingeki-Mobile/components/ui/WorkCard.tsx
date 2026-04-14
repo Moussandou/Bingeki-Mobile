@@ -28,38 +28,44 @@ export function WorkCard({ item, onPress, onIncrement }: WorkCardProps) {
 
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
-      <View style={styles.card}>
-        {/* Image area */}
-        <View style={styles.imageArea}>
-          <Image source={item.image} style={styles.image} contentFit="cover" />
-          {item.score != null && (
-            <View style={styles.scoreBadge}>
-              <Text style={styles.badgeText}>{item.score}</Text>
-            </View>
-          )}
-          <View style={[styles.typeBadge, { backgroundColor: item.type === 'manga' ? '#08D9D6' : '#FF2E63' }]}>
-            <Text style={[styles.badgeText, styles.typeBadgeText]}>{item.type.toUpperCase()}</Text>
-          </View>
-          <View style={styles.titleOverlay}>
-            <Text style={styles.titleText} numberOfLines={2}>{item.title}</Text>
-          </View>
-        </View>
+      <View style={styles.shadowOuter}>
+        {/* SHADOW LAYER */}
+        <View style={styles.brutalShadow} />
 
-        {/* Footer */}
-        <View style={styles.footer}>
-          <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: `${progressPct}%`, backgroundColor: getProgressColor(item.status) }]} />
-          </View>
-          <View style={styles.footerRow}>
-            <View style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
-              <Text style={[styles.statusText, { color: statusColor.text }]}>
-                {item.status.replace('_', ' ').toUpperCase()}
-              </Text>
+        {/* CONTENT LAYER */}
+        <View style={styles.card}>
+            {/* Image area */}
+            <View style={styles.imageArea}>
+            <Image source={item.image} style={styles.image} contentFit="cover" />
+            {item.score != null && (
+                <View style={styles.scoreBadge}>
+                <Text style={styles.badgeText}>{item.score}</Text>
+                </View>
+            )}
+            <View style={[styles.typeBadge, { backgroundColor: item.type === 'manga' ? '#08D9D6' : '#FF2E63' }]}>
+                <Text style={[styles.badgeText, styles.typeBadgeText]}>{item.type.toUpperCase()}</Text>
             </View>
-            <TouchableOpacity style={styles.incrementBtn} onPress={onIncrement} activeOpacity={0.8}>
-              <Text style={styles.incrementText}>+</Text>
-            </TouchableOpacity>
-          </View>
+            <View style={styles.titleOverlay}>
+                <Text style={styles.titleText} numberOfLines={2}>{item.title}</Text>
+            </View>
+            </View>
+
+            {/* Footer */}
+            <View style={styles.footer}>
+            <View style={styles.progressBar}>
+                <View style={[styles.progressFill, { width: `${progressPct}%`, backgroundColor: getProgressColor(item.status) }]} />
+            </View>
+            <View style={styles.footerRow}>
+                <View style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
+                <Text style={[styles.statusText, { color: statusColor.text }]}>
+                    {item.status.replace('_', ' ').toUpperCase()}
+                </Text>
+                </View>
+                <TouchableOpacity style={styles.incrementBtn} onPress={onIncrement} activeOpacity={0.8}>
+                <Text style={styles.incrementText}>+</Text>
+                </TouchableOpacity>
+            </View>
+            </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -67,17 +73,21 @@ export function WorkCard({ item, onPress, onIncrement }: WorkCardProps) {
 }
 
 const styles = StyleSheet.create({
+  shadowOuter: {
+    marginBottom: 20,
+    position: 'relative',
+  },
+  brutalShadow: {
+    position: 'absolute',
+    inset: 0,
+    backgroundColor: '#000000',
+    transform: [{ translateX: 4 }, { translateY: 4 }],
+  },
   card: {
-    backgroundColor: '#1e1e1e',
-    borderWidth: 2.5,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 3,
     borderColor: '#000000',
-    borderRadius: 6,
     overflow: 'hidden',
-    shadowColor: '#000000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 0,
   },
   imageArea: {
     height: 140,
@@ -132,10 +142,10 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   progressBar: {
-    backgroundColor: '#111111',
+    backgroundColor: '#F0F0F0',
     borderWidth: 1,
-    borderColor: '#222222',
-    height: 4,
+    borderColor: '#000000',
+    height: 8,
     overflow: 'hidden',
   },
   progressFill: {
@@ -147,8 +157,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statusBadge: {
-    paddingHorizontal: 4,
+    paddingHorizontal: 6,
     paddingVertical: 2,
+    borderWidth: 1,
+    borderColor: 'rgba(0,0,0,0.1)',
   },
   statusText: {
     fontSize: 8,
@@ -158,14 +170,14 @@ const styles = StyleSheet.create({
   incrementBtn: {
     width: 28,
     height: 28,
-    backgroundColor: '#FF2E63',
-    borderWidth: 1.5,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 2,
     borderColor: '#000000',
     justifyContent: 'center',
     alignItems: 'center',
   },
   incrementText: {
-    color: '#FFFFFF',
+    color: '#000000',
     fontFamily: 'Outfit_900Black',
     fontSize: 16,
   },

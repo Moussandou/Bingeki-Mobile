@@ -4,7 +4,8 @@
  */
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
-import { MangaTitle } from './MangaTitle';
+import { Fonts } from '@/constants/theme';
+import { IconSymbol } from './icon-symbol';
 
 interface SectionHeaderProps {
   title: string;
@@ -15,13 +16,14 @@ interface SectionHeaderProps {
 export function SectionHeader({ title, count, style }: SectionHeaderProps) {
   return (
     <View style={[styles.container, style]}>
-      <MangaTitle text={title} size="sm" />
+      <Text style={styles.title}>{title}</Text>
       {count !== undefined ? (
         <View style={styles.countBadge}>
-          <Text style={styles.countText}>{count}</Text>
+          <Text style={styles.countText}>+{count}</Text>
         </View>
       ) : null}
-      <View style={styles.line} />
+      <View style={styles.spacer} />
+      <IconSymbol name="plus.circle" size={12} color="rgba(0,0,0,0.3)" />
     </View>
   );
 }
@@ -30,29 +32,29 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingBottom: 8,
-    marginBottom: 10,
-    borderBottomWidth: 2,
-    borderBottomColor: '#FF2E63',
+    gap: 12,
+    marginBottom: 15,
+  },
+  title: {
+    fontFamily: Fonts.heading,
+    fontSize: 16,
+    color: '#000000',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   countBadge: {
-    backgroundColor: '#1e1e1e',
+    backgroundColor: '#FFFFFF',
     borderWidth: 1.5,
-    borderColor: '#333333',
-    paddingHorizontal: 5,
+    borderColor: '#000000',
+    paddingHorizontal: 6,
     paddingVertical: 1,
   },
   countText: {
-    fontFamily: 'Inter_700Bold',
+    fontFamily: Fonts.bodyBold,
     fontSize: 9,
-    color: '#08D9D6',
-    fontWeight: '700',
-    letterSpacing: 1,
+    color: '#000000',
   },
-  line: {
+  spacer: {
     flex: 1,
-    height: 1,
-    backgroundColor: 'rgba(255, 46, 99, 0.25)',
   },
 });

@@ -83,15 +83,11 @@ export default function LoginScreen() {
 
                         <View style={styles.header}>
                             <Image 
-                                source={require('@/assets/images/logo.png')} 
+                                source={require('@/assets/images/icon.png')} 
                                 style={styles.logoImage} 
                                 resizeMode="contain"
                             />
-                            <View style={[styles.logoBox, { borderColor: borderHeavyColor }]}>
-                                <ThemedText style={styles.logoText}>BINGEKI</ThemedText>
-                                <View style={[styles.cornerBox, { backgroundColor: primaryPink }]} />
-                                <View style={[styles.bottomDecorator, { backgroundColor: borderHeavyColor }]} />
-                            </View>
+                            <ThemedText style={styles.logoText}>BINGEKI</ThemedText>
                             <ThemedText style={styles.subtitle}>CHAMPIONS ARE BORN IN THE BINGE</ThemedText>
                         </View>
 
@@ -216,11 +212,13 @@ const styles = StyleSheet.create({
         transform: [{ rotate: '-1.5deg' }],
     },
     logoText: {
-        fontSize: 56,
+        fontSize: 40,
         fontFamily: Fonts.headingBold,
-        letterSpacing: -3,
+        letterSpacing: 2,
         color: '#000',
         fontWeight: '900',
+        marginTop: 10,
+        textTransform: 'uppercase',
     },
     cornerBox: {
         position: 'absolute',

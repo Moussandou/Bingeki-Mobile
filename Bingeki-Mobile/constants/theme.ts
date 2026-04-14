@@ -12,7 +12,7 @@ export const Colors = {
   light: {
     text: '#1a1a1a',
     textDim: '#666666',
-    background: '#f5f5f5',
+    background: '#FFFFFF',
     tint: primaryPink,
     icon: '#1a1a1a',
     tabIconDefault: '#666666',
@@ -69,7 +69,21 @@ export const Borders = {
 export const Shadows = {
   brutal: {
     shadowColor: '#000000',
+    shadowOffset: { width: 4, height: 4 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  brutalHover: {
+    shadowColor: '#000000',
     shadowOffset: { width: 6, height: 6 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  brutalActive: {
+    shadowColor: '#000000',
+    shadowOffset: { width: 2, height: 2 },
     shadowOpacity: 1,
     shadowRadius: 0,
     elevation: 0,

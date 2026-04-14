@@ -96,7 +96,7 @@ export function MangaSpeedlines() {
  * Triple-layered for Brutalist impact with vibration animation
  */
 function WakuWakuLabel({ text, top, left, right, bottom, rotate, size }: any) {
-    const accentColor = '#FF2E63';
+    const dotsColor = useThemeColor({}, 'dots');
     
     return (
         <View 
@@ -108,29 +108,14 @@ function WakuWakuLabel({ text, top, left, right, bottom, rotate, size }: any) {
                 }
             ]}
         >
-            {/* Layer 1: Red Brutalist Offset Shadow */}
-            <ThemedText style={[styles.sfxText, { fontSize: size, color: accentColor, position: 'absolute', top: 6, left: 6 }]}>
-                {text}
-            </ThemedText>
-            
-            {/* Layer 2: Extra Black "Gasket" Shadow for thickness */}
-            <ThemedText style={[styles.sfxText, { fontSize: size, color: '#000', position: 'absolute', top: 2, left: 2 }]}>
-                {text}
-            </ThemedText>
-            <ThemedText style={[styles.sfxText, { fontSize: size, color: '#000', position: 'absolute', top: -1, left: -1 }]}>
-                {text}
-            </ThemedText>
-
-            {/* Layer 3: Main White Text with light shadow */}
+            {/* Simple Clean Manga SFX - No colored shadows */}
             <ThemedText 
                 style={[
                     styles.sfxText, 
                     { 
                         fontSize: size, 
-                        color: '#FFFFFF',
-                        textShadowColor: '#000',
-                        textShadowOffset: { width: 1, height: 1 },
-                        textShadowRadius: 1 
+                        color: dotsColor,
+                        opacity: 0.15, // Subtle background effect
                     }
                 ]}
             >
@@ -149,7 +134,7 @@ export function MangaSFX() {
     ];
 
     return (
-        <View style={[StyleSheet.absoluteFill, { zIndex: 101 }]} pointerEvents="none">
+        <View style={[StyleSheet.absoluteFill, { zIndex: 0 }]} pointerEvents="none">
             {labels.map((label, i) => (
                 <WakuWakuLabel key={i} {...label} />
             ))}
@@ -162,15 +147,15 @@ export function BackgroundSystem({ children }: { children?: React.ReactNode }) {
 
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
-      {/* 1. Main Content Base */}
-      <View style={styles.content}>
-        {children}
-      </View>
-
-      {/* 2. Manga Decorative Overlays */}
+      {/* 1. Manga Decorative Background Layers (Underneath content) */}
       <MangaHalftone />
       <MangaSpeedlines />
       <MangaSFX />
+
+      {/* 2. Main Content Base */}
+      <View style={styles.content}>
+        {children}
+      </View>
     </View>
   );
 }

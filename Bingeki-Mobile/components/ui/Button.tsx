@@ -113,28 +113,27 @@ export function Button({
   const handlePressIn = () => {
     if (disabled || isLoading) return;
     
-    scale.value = withSpring(0.98);
-    
     if (isManga) {
-      translationX.value = withSpring(2);
-      translationY.value = withSpring(2);
-      shadowOffsetX.value = withSpring(Shadows.brutalPressed.shadowOffset.width);
-      shadowOffsetY.value = withSpring(Shadows.brutalPressed.shadowOffset.height);
-      shadowColor.value = primaryColor;
+      // Physical sinking effect: move by 4px, shadow shrinks to 2px
+      translationX.value = withSpring(4, { damping: 20, stiffness: 200 });
+      translationY.value = withSpring(4, { damping: 20, stiffness: 200 });
+      shadowOffsetX.value = withSpring(2, { damping: 20, stiffness: 200 });
+      shadowOffsetY.value = withSpring(2, { damping: 20, stiffness: 200 });
+    } else {
+      scale.value = withSpring(0.96);
     }
   };
 
   const handlePressOut = () => {
     if (disabled || isLoading) return;
     
-    scale.value = withSpring(1);
-    
     if (isManga) {
-      translationX.value = withSpring(0);
-      translationY.value = withSpring(0);
-      shadowOffsetX.value = withSpring(Shadows.brutal.shadowOffset.width);
-      shadowOffsetY.value = withSpring(Shadows.brutal.shadowOffset.height);
-      shadowColor.value = Shadows.brutal.shadowColor;
+      translationX.value = withSpring(0, { damping: 20, stiffness: 200 });
+      translationY.value = withSpring(0, { damping: 20, stiffness: 200 });
+      shadowOffsetX.value = withSpring(Shadows.brutal.shadowOffset.width, { damping: 20, stiffness: 200 });
+      shadowOffsetY.value = withSpring(Shadows.brutal.shadowOffset.height, { damping: 20, stiffness: 200 });
+    } else {
+      scale.value = withSpring(1);
     }
   };
 
