@@ -1,350 +1,318 @@
-/**
- * Main dashboard screen
- * Displays user progress, rank, and quick actions
- */
-import React from 'react';
-import { StyleSheet, ScrollView, View, Dimensions } from 'react-native';
-import { Image } from 'expo-image';
+import { useState, useEffect } from 'react';
+import { StyleSheet, ScrollView, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { ThemedText } from '@/components/themed-text';
-import { ThemedView } from '@/components/themed-view';
-import { Card } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Spacing, Colors, Fonts, Borders } from '@/constants/theme';
-import { useThemeColor } from '@/hooks/use-theme-color';
-import { calculateRank, getRankColor } from '@/constants/rank';
-
 import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
-
+import { ScreenHeader } from '@/components/layout/ScreenHeader';
+import { SectionHeader } from '@/components/ui/SectionHeader';
+import { AnimeCard } from '@/components/ui/AnimeCard';
+import { ThemedText } from '@/components/themed-text';
+import { IconSymbol } from '@/components/ui/icon-symbol';
+import { Spacing, Fonts } from '@/constants/theme';
+import { useThemeColor } from '@/hooks/use-theme-color';
 import { useAuthStore } from '@/store/authStore';
 import { useGamificationStore } from '@/store/gamificationStore';
 import { useLibraryStore } from '@/store/libraryStore';
-
-const { width: SCREEN_WIDTH } = Dimensions.get('window');
+import { getTopWorks, type JikanResult } from '@/services/api';
+import { calculateRank } from '@/utils/rankUtils';
 
 export default function DashboardScreen() {
   const router = useRouter();
   const primaryPink = useThemeColor({}, 'primary');
-  const surfaceColor = useThemeColor({}, 'surface');
-  const textColor = useThemeColor({}, 'text');
-  const textDimColor = useThemeColor({}, 'textDim');
   const borderHeavyColor = useThemeColor({}, 'borderHeavy');
-  const borderColor = useThemeColor({}, 'border');
 
-  // Unified data from stores
-  const { userProfile, loading: authLoading } = useAuthStore();
-  const { 
-    level, 
-    xp, 
-    xpToNextLevel, 
-    streak, 
-    totalChaptersRead, 
-    totalAnimeEpisodesWatched,
-    totalMoviesWatched 
-  } = useGamificationStore();
-  
+  const { userProfile } = useAuthStore();
+  const { level, xp, xpToNextLevel, streak } = useGamificationStore();
   const works = useLibraryStore((s) => s.works);
-  const completedWorksCount = works.filter(w => w.status === 'completed').length;
 
-  const username = userProfile?.displayName || 'TAKAX';
+  const [trending, setTrending] = useState<JikanResult[]>([]);
+  const [trendingLoading, setTrendingLoading] = useState(false);
+
+  useEffect(() => {
+    const load = async () => {
+      setTrendingLoading(true);
+      try {
+        setTrending(await getTopWorks('anime', 15));
+      } catch (e) {
+        console.error('Dashboard trending error:', e);
+      } finally {
+        setTrendingLoading(false);
+      }
+    };
+    load();
+  }, []);
+
+  const username = userProfile?.displayName ?? 'RÉVOLUTIONNAIRE';
   const rank = calculateRank(level);
-  const rankColor = getRankColor(rank);
-
-  // Generate avatar from username
-  const avatarUrl = userProfile?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${username}&backgroundColor=FF2E63`;
-
-  const userData = {
-    username,
-    level,
-    xp,
-    maxXp: xpToNextLevel,
-    streak,
-    objectives: { current: completedWorksCount % 10, total: 10 }, // Placeholder for dynamic objectives
-    stats: {
-      chaps: totalChaptersRead,
-      eps: totalAnimeEpisodesWatched,
-      films: totalMoviesWatched
-    }
-  };
+  const xpPct = Math.min((xp / xpToNextLevel) * 100, 100);
 
   return (
     <BackgroundSystem>
+      <ScreenHeader title="BINGEKI" subtitle={`BIENVENUE, ${username}`} />
       <ScrollView
         style={styles.container}
-        contentContainerStyle={styles.contentContainer}
+        contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* Profile Card */}
-        <Card variant="manga" style={styles.profileCard}>
-          <View style={styles.avatarWrapper}>
-            <View style={[styles.avatarShadow, { backgroundColor: primaryPink, borderColor: borderHeavyColor }]} />
-            <Image
-              source={avatarUrl}
-              style={[styles.avatar, { borderColor: borderHeavyColor, backgroundColor: borderHeavyColor === '#FFFFFF' ? '#1a1a1a' : '#f0f0f0' }]}
-              contentFit="cover"
-            />
-          </View>
-
-          <View style={styles.nameHeader}>
-            <ThemedText style={[styles.username, { color: textColor }]}>{userData.username}</ThemedText>
-            <View style={[styles.rankBadge, { borderColor, backgroundColor: surfaceColor }]}>
-              <ThemedText style={[styles.rankText, { color: rankColor }]}>{rank}</ThemedText>
+        {/* HUNTER LICENSE — Gamification Card */}
+        <View style={styles.licenseCard}>
+          {/* Header row */}
+          <View style={styles.licenseHeader}>
+            <View>
+              <ThemedText style={styles.licenseLabel}>HUNTER LICENSE</ThemedText>
+              <ThemedText style={styles.licenseName}>{username}</ThemedText>
+            </View>
+            <View style={styles.rankBox}>
+              <ThemedText style={styles.rankLabel}>RANG</ThemedText>
+              <ThemedText style={styles.rankValue}>{rank}</ThemedText>
             </View>
           </View>
 
-          <View style={styles.statusRow}>
-            <View style={[styles.streakBox, { borderColor: borderHeavyColor, backgroundColor: surfaceColor }]}>
-              <IconSymbol name="flame.fill" size={24} color={primaryPink} />
-              <ThemedText style={[styles.streakValue, { color: primaryPink }]}>{userData.streak}</ThemedText>
+          {/* XP Bar */}
+          <View style={styles.xpSection}>
+            <View style={styles.xpLabels}>
+              <ThemedText style={styles.xpLabel}>LVL {level}</ThemedText>
+              <ThemedText style={styles.xpLabel}>{xp} / {xpToNextLevel} XP</ThemedText>
             </View>
+            <View style={styles.xpBarTrack}>
+              <View style={[styles.xpBarFill, { width: `${xpPct}%` }]} />
+            </View>
+          </View>
 
-            <View style={styles.progressSection}>
-              <View style={styles.levelInfo}>
-                <ThemedText style={[styles.levelLabel, { color: textColor }]}>NIV {userData.level}</ThemedText>
-                <ThemedText style={[styles.xpLabel, { color: textDimColor }]}>{userData.xp} / {userData.maxXp} XP</ThemedText>
-              </View>
-              <View style={[styles.progressBarContainer, { backgroundColor: borderColor, borderColor: borderHeavyColor }]}>
-                <View 
-                  style={[
-                    styles.progressBarFill, 
-                    { 
-                      backgroundColor: primaryPink, 
-                      width: `${(userData.xp / userData.maxXp) * 100}%` 
-                    }
-                  ]} 
+          {/* Stats row */}
+          <View style={styles.statsRow}>
+            <View style={styles.statBox}>
+              <ThemedText style={styles.statValue}>{streak}</ThemedText>
+              <ThemedText style={styles.statLabel}>STREAK</ThemedText>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statBox}>
+              <ThemedText style={styles.statValue}>{works.length}</ThemedText>
+              <ThemedText style={styles.statLabel}>ŒUVRES</ThemedText>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statBox}>
+              <ThemedText style={styles.statValue}>{level}</ThemedText>
+              <ThemedText style={styles.statLabel}>NIVEAU</ThemedText>
+            </View>
+          </View>
+        </View>
+
+        {/* LE Q.G. — Trending */}
+        <View style={styles.section}>
+          <SectionHeader title="LE Q.G." count={Math.min(trending.length, 8)} style={styles.sectionHeader} />
+          {trendingLoading ? (
+            <ActivityIndicator color={primaryPink} style={styles.loader} />
+          ) : (
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.horizontalList}
+            >
+              {trending.slice(0, 8).map((item) => (
+                <AnimeCard
+                  key={item.mal_id}
+                  item={item}
+                  onPress={() => router.push(`/details/${item.mal_id}`)}
                 />
-              </View>
-            </View>
-          </View>
+              ))}
+            </ScrollView>
+          )}
+        </View>
 
-          <View style={styles.actionButtons}>
-            <Button
-              variant="manga"
-              title="DÉCOUVRIR"
-              icon={<IconSymbol name="plus" size={20} color="#FFF" />}
-              style={styles.discoverBtn}
-              onPress={() => router.push('/discover')}
-            />
-            <Button
-              variant="outline"
-              title="PROFIL"
-              style={[styles.profileBtn, { borderColor: borderHeavyColor, borderRadius: Borders.mangaRadius }]}
-              onPress={() => router.push('/profile')}
-            />
+        {/* EXPLORATION — Genre pills */}
+        <View style={styles.section}>
+          <SectionHeader title="EXPLORATION" style={styles.sectionHeader} />
+          <TouchableOpacity
+            style={[styles.searchMock, { borderColor: primaryPink }]}
+            onPress={() => router.push('/discover')}
+          >
+            <IconSymbol name="magnifyingglass" size={18} color={primaryPink} />
+            <ThemedText style={styles.searchText}>Rechercher dans le catalogue...</ThemedText>
+          </TouchableOpacity>
+          <View style={styles.genreRow}>
+            {['SHONEN', 'SEINEN', 'ISEKAI', 'ACTION'].map((genre) => (
+              <TouchableOpacity
+                key={genre}
+                style={[styles.genreTag, { borderColor: borderHeavyColor }]}
+                onPress={() => router.push('/discover')}
+              >
+                <ThemedText style={styles.genreText}>{genre}</ThemedText>
+              </TouchableOpacity>
+            ))}
           </View>
-        </Card>
+        </View>
 
-        {/* Objective Card */}
-        <Card variant="manga" style={[styles.secondaryCard, { backgroundColor: surfaceColor }]}>
-          <View style={styles.cardHeader}>
-            <IconSymbol name="target" size={22} color={textDimColor} />
-            <ThemedText style={[styles.cardTitle, { color: textDimColor }]}>OBJECTIF</ThemedText>
-          </View>
-          <View style={styles.objectiveContent}>
-            <ThemedText style={[styles.objectiveValue, { color: textColor }]}>
-              {userData.objectives.current}
-              <ThemedText style={[styles.objectiveTotal, { color: textDimColor }]}>/{userData.objectives.total}</ThemedText>
-            </ThemedText>
-            <View style={[styles.pinkUnderline, { backgroundColor: primaryPink }]} />
-          </View>
-        </Card>
-
-        {/* Total Stats Card */}
-        <Card variant="manga" style={[styles.secondaryCard, { backgroundColor: surfaceColor }]}>
-          <View style={styles.cardHeader}>
-            <IconSymbol name="arrow.up.right" size={22} color={textDimColor} />
-            <ThemedText style={[styles.cardTitle, { color: textDimColor }]}>TOTAL</ThemedText>
-          </View>
-          <View style={styles.statsGrid}>
-            <View style={styles.statItem}>
-              <ThemedText style={[styles.statCount, { color: textColor }]}>{userData.stats.chaps}</ThemedText>
-              <ThemedText style={[styles.statLabel, { color: textDimColor }]}>CHAPS</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <ThemedText style={[styles.statCount, { color: textColor }]}>{userData.stats.eps}</ThemedText>
-              <ThemedText style={[styles.statLabel, { color: textDimColor }]}>EPS</ThemedText>
-            </View>
-            <View style={styles.statItem}>
-              <ThemedText style={[styles.statCount, { color: textColor }]}>{userData.stats.films}</ThemedText>
-              <ThemedText style={[styles.statLabel, { color: textDimColor }]}>FILMS</ThemedText>
-            </View>
-          </View>
-        </Card>
-
-        {/* FAB spacing */}
-        <View style={{ height: 120 }} />
+        <View style={styles.bottomPad} />
       </ScrollView>
     </BackgroundSystem>
   );
 }
 
 const styles = StyleSheet.create({
-  bgContainer: {
-    flex: 1,
-  },
-  verticalStripe: {
-    position: 'absolute',
-    left: '50%',
-    marginLeft: -40,
-    width: 80,
-    height: '100%',
-  },
   container: {
     flex: 1,
   },
-  contentContainer: {
-    padding: Spacing.md,
-    paddingTop: 80,
-    gap: Spacing.lg,
+  content: {
+    paddingTop: 16,
+    paddingBottom: 120,
   },
-  profileCard: {
-    alignItems: 'center',
-    paddingVertical: Spacing.xl,
-  },
-  avatarWrapper: {
-    width: 120,
-    height: 120,
-    marginBottom: Spacing.md,
-  },
-  avatarShadow: {
-    position: 'absolute',
-    top: 6,
-    left: 6,
-    width: 120,
-    height: 120,
-    borderWidth: 2,
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderWidth: 4,
-  },
-  nameHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.sm,
-    marginBottom: Spacing.lg,
-  },
-  username: {
-    fontSize: 28,
-    fontFamily: Fonts.heading,
-    letterSpacing: 1,
-  },
-  rankBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderWidth: 1,
-  },
-  rankText: {
-    fontSize: 12,
-    fontFamily: Fonts.headingBold,
-  },
-  statusRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    gap: Spacing.md,
+  // Hunter License Card
+  licenseCard: {
+    marginHorizontal: Spacing.md,
     marginBottom: Spacing.xl,
-    paddingHorizontal: Spacing.md,
+    backgroundColor: '#FF2E63',
+    borderWidth: 3,
+    borderColor: '#000000',
+    borderRadius: 6,
+    padding: 14,
+    shadowColor: '#000000',
+    shadowOffset: { width: 5, height: 5 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 0,
   },
-  streakBox: {
-    borderWidth: Borders.width,
-    padding: Spacing.sm,
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    minWidth: 80,
-    justifyContent: 'center',
-  },
-  streakValue: {
-    fontSize: 22,
-    fontFamily: Fonts.heading,
-  },
-  progressSection: {
-    flex: 1,
-  },
-  levelInfo: {
+  licenseHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
-    marginBottom: 4,
+    alignItems: 'flex-start',
+    marginBottom: 14,
   },
-  levelLabel: {
+  licenseLabel: {
+    fontSize: 8,
+    fontFamily: Fonts.bodyBold,
+    color: 'rgba(0,0,0,0.5)',
+    letterSpacing: 2,
+  },
+  licenseName: {
+    fontSize: 20,
     fontFamily: Fonts.heading,
-    fontSize: 16,
+    color: '#000000',
+    letterSpacing: 1,
+  },
+  rankBox: {
+    alignItems: 'flex-end',
+  },
+  rankLabel: {
+    fontSize: 8,
+    fontFamily: Fonts.bodyBold,
+    color: 'rgba(0,0,0,0.5)',
+    letterSpacing: 2,
+  },
+  rankValue: {
+    fontSize: 28,
+    fontFamily: Fonts.heading,
+    color: '#000000',
+    letterSpacing: 2,
+  },
+  xpSection: {
+    marginBottom: 14,
+  },
+  xpLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 6,
   },
   xpLabel: {
-    fontSize: 12,
+    fontSize: 9,
     fontFamily: Fonts.bodyBold,
+    color: 'rgba(0,0,0,0.6)',
+    letterSpacing: 1,
   },
-  progressBarContainer: {
-    height: 10,
-    borderWidth: 2,
+  xpBarTrack: {
+    height: 8,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+    borderRadius: 2,
     overflow: 'hidden',
   },
-  progressBarFill: {
+  xpBarFill: {
     height: '100%',
+    backgroundColor: '#000000',
+    borderRadius: 2,
   },
-  actionButtons: {
-    width: '100%',
-    gap: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-  },
-  discoverBtn: {
-    width: '100%',
-  },
-  profileBtn: {
-    width: 'auto',
-    alignSelf: 'center',
-    borderWidth: 2,
-    paddingHorizontal: 30,
-  },
-  secondaryCard: {
-    padding: Spacing.md,
-  },
-  cardHeader: {
+  statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: Spacing.md,
-    justifyContent: 'center',
-  },
-  cardTitle: {
-    fontSize: 14,
-    letterSpacing: 1,
-    fontFamily: Fonts.bodyBold,
-  },
-  objectiveContent: {
-    alignItems: 'center',
-  },
-  objectiveValue: {
-    fontSize: 42,
-    fontFamily: Fonts.heading,
-    lineHeight: 42,
-  },
-  objectiveTotal: {
-    fontSize: 24,
-  },
-  pinkUnderline: {
-    height: 4,
-    width: 60,
-    marginTop: 4,
-  },
-  statsGrid: {
-    flexDirection: 'row',
     justifyContent: 'space-around',
-    width: '100%',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(0,0,0,0.2)',
+    paddingTop: 12,
   },
-  statItem: {
+  statBox: {
     alignItems: 'center',
   },
-  statCount: {
-    fontSize: 24,
+  statValue: {
+    fontSize: 18,
     fontFamily: Fonts.heading,
+    color: '#000000',
   },
   statLabel: {
-    fontSize: 10,
+    fontSize: 7,
     fontFamily: Fonts.bodyBold,
+    color: 'rgba(0,0,0,0.5)',
+    letterSpacing: 1,
+  },
+  statDivider: {
+    width: 1,
+    height: 28,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  // Sections
+  section: {
+    marginBottom: Spacing.xl,
+  },
+  sectionHeader: {
+    marginHorizontal: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  horizontalList: {
+    paddingHorizontal: Spacing.md,
+    gap: Spacing.md,
+  },
+  loader: {
+    marginTop: Spacing.lg,
+  },
+  // Exploration
+  searchMock: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginHorizontal: Spacing.md,
+    marginBottom: Spacing.md,
+    padding: 12,
+    borderWidth: 2,
+    gap: 10,
+    shadowColor: '#000000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  searchText: {
+    fontFamily: Fonts.body,
+    fontSize: 13,
+    opacity: 0.5,
+  },
+  genreRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    paddingHorizontal: Spacing.md,
+  },
+  genreTag: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderWidth: 2,
+    shadowColor: '#000000',
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 1,
+    shadowRadius: 0,
+    elevation: 0,
+  },
+  genreText: {
+    fontFamily: Fonts.headingBold,
+    fontSize: 10,
+    letterSpacing: 1,
+  },
+  bottomPad: {
+    height: 40,
   },
 });
