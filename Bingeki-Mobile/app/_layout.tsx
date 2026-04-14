@@ -15,6 +15,9 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuthSync } from '@/hooks/useAuthSync';
 import { useFirestoreSync } from '@/hooks/useFirestoreSync';
 
+import { useSegments, useRouter } from 'expo-router';
+import { useAuthStore } from '@/store/authStore';
+
 SplashScreen.preventAutoHideAsync();
 
 export const unstable_settings = {
@@ -23,6 +26,11 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const segments = useSegments();
+  const router = useRouter();
+  
+  // Auth state
+  const { user, loading: authLoading } = useAuthStore();
   
   // Initialize Firebase sync hooks
   useAuthSync();
@@ -34,6 +42,21 @@ export default function RootLayout() {
     Inter_400Regular,
     Inter_700Bold,
   });
+
+  // Redirection Logic
+  useEffect(() => {
+    if (authLoading || !loaded) return;
+
+    // const inAuthGroup = segments[0] === '(auth)';
+
+    // if (!user && !inAuthGroup) {
+    //   // Not logged in, redirect to login
+    //   router.replace('/(auth)/login');
+    // } else if (user && inAuthGroup) {
+    //   // Logged in, redirect to tabs
+    //   router.replace('/(tabs)');
+    // }
+  }, [user, authLoading, segments, loaded]);
 
   useEffect(() => {
     if (loaded || error) {
@@ -49,8 +72,9 @@ export default function RootLayout() {
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        <Stack.Screen name="details/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
       </Stack>
       <StatusBar style="auto" />
     </ThemeProvider>

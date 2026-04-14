@@ -1,0 +1,12 @@
+# macOS
+.DS_Store
+
+# Superpowers plugin files (HTML, logs, artifacts)
+.superpowers/
+
+# Project docs / plans (local only)
+docs/
+
+# Logs
+*.log
+logs/

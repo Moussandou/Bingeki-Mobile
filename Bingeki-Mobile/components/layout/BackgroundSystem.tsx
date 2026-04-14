@@ -5,6 +5,7 @@
 import React from 'react';
 import { StyleSheet, View, Dimensions, Image, Platform } from 'react-native';
 import { useThemeColor } from '@/hooks/use-theme-color';
+import { ThemedText } from '@/components/themed-text';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -57,6 +58,48 @@ export function MangaSpeedlines() {
   );
 }
 
+export function MangaLabels() {
+  const color = useThemeColor({}, 'dots');
+  
+  const labels = [
+    { text: 'SUIVI !!', top: 120, left: -20, rotate: '-15deg', size: 40 },
+    { text: 'LEVEL UP', top: 350, right: -30, rotate: '10deg', size: 30 },
+    { text: 'BINGE !!', bottom: 150, left: -10, rotate: '5deg', size: 50 },
+    { text: 'COMMUNAUTÉ', top: SCREEN_HEIGHT * 0.6, right: -40, rotate: '-12deg', size: 25 },
+  ];
+
+  return (
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
+      {labels.map((label, i) => (
+        <View 
+          key={i} 
+          style={[
+            styles.labelContainer,
+            {
+              top: label.top,
+              bottom: label.bottom,
+              left: label.left,
+              right: label.right,
+              transform: [{ rotate: label.rotate }],
+              opacity: 0.03,
+            }
+          ]}
+        >
+          <ThemedText 
+            style={{ 
+              fontSize: label.size, 
+              fontFamily: 'Outfit_900Black',
+              color: color,
+            }}
+          >
+            {label.text}
+          </ThemedText>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 export function BackgroundSystem({ children }: { children?: React.ReactNode }) {
   const bgColor = useThemeColor({}, 'background');
 
@@ -64,6 +107,7 @@ export function BackgroundSystem({ children }: { children?: React.ReactNode }) {
     <View style={[styles.container, { backgroundColor: bgColor }]}>
       <MangaHalftone />
       <MangaSpeedlines />
+      <MangaLabels />
       {children}
     </View>
   );
@@ -78,5 +122,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: 1,
     opacity: 0.5,
+  },
+  labelContainer: {
+    position: 'absolute',
+    zIndex: -1,
   }
 });

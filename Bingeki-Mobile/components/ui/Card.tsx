@@ -12,7 +12,7 @@ import Animated, {
 import { Borders, Shadows } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 
-export type CardVariant = 'default' | 'glass' | 'manga';
+export type CardVariant = 'default' | 'manga';
 
 export type CardProps = ViewProps & {
   children: React.ReactNode;
@@ -31,10 +31,9 @@ export function Card({
   style, 
   ...props 
 }: CardProps) {
-  const isManga = variant === 'manga';
-  const isGlass = variant === 'glass';
+  const isManga = variant === 'manga' || variant === 'default'; // Everything is brutal now
 
-  const borderColor = useThemeColor({}, isManga ? 'borderHeavy' : 'border');
+  const borderColor = useThemeColor({}, 'borderHeavy');
   const backgroundColor = useThemeColor({}, 'surface');
   const primaryColor = useThemeColor({}, 'primary');
   
@@ -42,7 +41,7 @@ export function Card({
   const translationX = useSharedValue(0);
   const translationY = useSharedValue(0);
   
-  const shadowSettings = isManga ? Shadows.brutal : Shadows.glass;
+  const shadowSettings = Shadows.brutal;
   const shadowOffsetX = useSharedValue(shadowSettings.shadowOffset.width);
   const shadowOffsetY = useSharedValue(shadowSettings.shadowOffset.height);
   const shadowColor = useSharedValue(shadowSettings.shadowColor);
@@ -54,7 +53,7 @@ export function Card({
         { translateX: translationX.value },
         { translateY: translationY.value },
       ],
-      // Native shadow
+      // Native shadow (iOS)
       shadowOffset: {
         width: shadowOffsetX.value,
         height: shadowOffsetY.value,
@@ -67,32 +66,28 @@ export function Card({
     if (!hoverable) return;
     scale.value = withSpring(0.98);
     
-    if (isManga) {
-      translationX.value = withSpring(2);
-      translationY.value = withSpring(2);
-      shadowOffsetX.value = withSpring(Shadows.brutalPressed.shadowOffset.width);
-      shadowOffsetY.value = withSpring(Shadows.brutalPressed.shadowOffset.height);
-      shadowColor.value = primaryColor;
-    }
+    translationX.value = withSpring(2);
+    translationY.value = withSpring(2);
+    shadowOffsetX.value = withSpring(Shadows.brutalPressed.shadowOffset.width);
+    shadowOffsetY.value = withSpring(Shadows.brutalPressed.shadowOffset.height);
+    shadowColor.value = primaryColor;
   };
 
   const handlePressOut = () => {
     if (!hoverable) return;
     scale.value = withSpring(1);
     
-    if (isManga) {
-      translationX.value = withSpring(0);
-      translationY.value = withSpring(0);
-      shadowOffsetX.value = withSpring(Shadows.brutal.shadowOffset.width);
-      shadowOffsetY.value = withSpring(Shadows.brutal.shadowOffset.height);
-      shadowColor.value = Shadows.brutal.shadowColor;
-    }
+    translationX.value = withSpring(0);
+    translationY.value = withSpring(0);
+    shadowOffsetX.value = withSpring(Shadows.brutal.shadowOffset.width);
+    shadowOffsetY.value = withSpring(Shadows.brutal.shadowOffset.height);
+    shadowColor.value = Shadows.brutal.shadowColor;
   };
 
   const Component = (hoverable || onPress) ? AnimatedPressable : Animated.View;
 
   const androidShadowStyle = useAnimatedStyle(() => {
-    if (!isManga || Platform.OS !== 'android') return {};
+    if (Platform.OS !== 'android') return {};
     return {
       backgroundColor: shadowColor.value as any,
       top: shadowOffsetY.value,
@@ -105,7 +100,7 @@ export function Card({
 
   // Android shadow fallback
   const renderShadow = () => {
-    if (!isManga || Platform.OS !== 'android') return null;
+    if (Platform.OS !== 'android') return null;
     
     return (
       <Animated.View
@@ -129,8 +124,8 @@ export function Card({
           {
             backgroundColor,
             borderColor,
-            borderWidth: isManga ? Borders.width : (isGlass ? 1 : 0),
-            borderRadius: isManga ? Borders.mangaRadius : (isGlass ? 12 : 8),
+            borderWidth: Borders.width,
+            borderRadius: Borders.mangaRadius,
           },
           animatedStyle,
           style as ViewStyle,

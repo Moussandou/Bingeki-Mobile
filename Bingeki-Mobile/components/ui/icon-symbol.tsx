@@ -7,10 +7,9 @@ import { SymbolWeight, SymbolViewProps } from 'expo-symbols';
 import { ComponentProps } from 'react';
 import { OpaqueColorValue, type StyleProp, type TextStyle } from 'react-native';
 
-type IconMapping = Partial<Record<SymbolViewProps['name'], ComponentProps<typeof MaterialIcons>['name']>>;
-type IconSymbolName = keyof typeof MAPPING;
+type MaterialIconName = ComponentProps<typeof MaterialIcons>['name'];
 
-const MAPPING = {
+const MAPPING: Record<string, MaterialIconName> = {
   'house.fill': 'home',
   'paperplane.fill': 'send',
   'chevron.left.forwardslash.chevron.right': 'code',
@@ -47,8 +46,14 @@ const MAPPING = {
   'trash': 'delete-outline',
   'checkmark': 'check',
   'chevron.left': 'chevron-left',
-} as const satisfies IconMapping;
+  'envelope.fill': 'email',
+  'lock.fill': 'lock',
+  'lock.shield.fill': 'security',
+  'logo-google': 'login', // MaterialIcons doesn't have google logo, using login icon
+  'logo-discord': 'discord', 
+};
 
+export type IconSymbolName = keyof typeof MAPPING;
 
 export function IconSymbol({
   name,
