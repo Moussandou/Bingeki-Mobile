@@ -1,6 +1,7 @@
 import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { type Work } from '@/store/libraryStore';
+import { BrutalView } from './BrutalView';
 
 interface WorkCardProps {
   item: Work;
@@ -29,42 +30,52 @@ export function WorkCard({ item, onPress, onIncrement }: WorkCardProps) {
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress}>
       <View style={styles.shadowOuter}>
-        {/* SHADOW LAYER */}
         <View style={styles.brutalShadow} />
 
-        {/* CONTENT LAYER */}
         <View style={styles.card}>
-            {/* Image area */}
             <View style={styles.imageArea}>
-            <Image source={item.image} style={styles.image} contentFit="cover" />
-            {item.score != null && (
-                <View style={styles.scoreBadge}>
-                <Text style={styles.badgeText}>{item.score}</Text>
+                <Image source={item.image} style={styles.image} contentFit="cover" />
+                
+                {item.score != null && (
+                    <View style={styles.badgeTopRight}>
+                        <BrutalView offset={2} borderRadius={0} contentStyle={styles.scoreBadge}>
+                            <Text style={styles.badgeText}>{item.score}</Text>
+                        </BrutalView>
+                    </View>
+                )}
+
+                <View style={styles.badgeTopLeft}>
+                    <BrutalView 
+                        offset={2} 
+                        borderRadius={0} 
+                        contentStyle={[styles.typeBadge, { backgroundColor: item.type === 'manga' ? '#08D9D6' : '#FF2E63' }]}
+                    >
+                        <Text style={[styles.badgeText, styles.typeBadgeText]}>{item.type.toUpperCase()}</Text>
+                    </BrutalView>
                 </View>
-            )}
-            <View style={[styles.typeBadge, { backgroundColor: item.type === 'manga' ? '#08D9D6' : '#FF2E63' }]}>
-                <Text style={[styles.badgeText, styles.typeBadgeText]}>{item.type.toUpperCase()}</Text>
-            </View>
-            <View style={styles.titleOverlay}>
-                <Text style={styles.titleText} numberOfLines={2}>{item.title}</Text>
-            </View>
+
+                <View style={styles.titleOverlay}>
+                    <Text style={styles.titleText} numberOfLines={2}>{item.title}</Text>
+                </View>
             </View>
 
-            {/* Footer */}
             <View style={styles.footer}>
-            <View style={styles.progressBar}>
-                <View style={[styles.progressFill, { width: `${progressPct}%`, backgroundColor: getProgressColor(item.status) }]} />
-            </View>
-            <View style={styles.footerRow}>
-                <View style={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
-                <Text style={[styles.statusText, { color: statusColor.text }]}>
-                    {item.status.replace('_', ' ').toUpperCase()}
-                </Text>
+                <View style={styles.progressBar}>
+                    <View style={[styles.progressFill, { width: `${progressPct}%`, backgroundColor: getProgressColor(item.status) }]} />
                 </View>
-                <TouchableOpacity style={styles.incrementBtn} onPress={onIncrement} activeOpacity={0.8}>
-                <Text style={styles.incrementText}>+</Text>
-                </TouchableOpacity>
-            </View>
+                <View style={styles.footerRow}>
+                    <BrutalView offset={2} borderRadius={0} contentStyle={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
+                        <Text style={[styles.statusText, { color: statusColor.text }]}>
+                            {item.status.replace('_', ' ').toUpperCase()}
+                        </Text>
+                    </BrutalView>
+
+                    <BrutalView offset={2} borderRadius={0} contentStyle={styles.incrementBtn}>
+                        <TouchableOpacity onPress={onIncrement} activeOpacity={0.7} style={styles.incrementInner}>
+                            <Text style={styles.incrementText}>+</Text>
+                        </TouchableOpacity>
+                    </BrutalView>
+                </View>
             </View>
         </View>
       </View>
@@ -97,24 +108,28 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
   },
-  scoreBadge: {
+  badgeTopRight: {
     position: 'absolute',
-    top: 4,
-    right: 4,
+    top: 6,
+    right: 6,
+  },
+  badgeTopLeft: {
+    position: 'absolute',
+    top: 6,
+    left: 6,
+  },
+  scoreBadge: {
     backgroundColor: '#FF2E63',
     borderWidth: 1.5,
     borderColor: '#000000',
-    paddingHorizontal: 4,
-    paddingVertical: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
   },
   typeBadge: {
-    position: 'absolute',
-    top: 4,
-    left: 4,
     borderWidth: 1.5,
     borderColor: '#000000',
-    paddingHorizontal: 4,
-    paddingVertical: 2,
+    paddingHorizontal: 6,
+    paddingVertical: 3,
   },
   badgeText: {
     color: '#FFFFFF',
@@ -130,22 +145,22 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: 'rgba(0,0,0,0.85)',
-    padding: 4,
+    padding: 6,
   },
   titleText: {
     color: '#FFFFFF',
     fontFamily: 'Outfit_900Black',
-    fontSize: 9,
+    fontSize: 10,
   },
   footer: {
-    padding: 6,
-    gap: 6,
+    padding: 10,
+    gap: 10,
   },
   progressBar: {
     backgroundColor: '#F0F0F0',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#000000',
-    height: 8,
+    height: 10,
     overflow: 'hidden',
   },
   progressFill: {
@@ -157,28 +172,31 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statusBadge: {
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderWidth: 1,
-    borderColor: 'rgba(0,0,0,0.1)',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderWidth: 1.5,
+    borderColor: 'rgba(0,0,0,0.2)',
   },
   statusText: {
-    fontSize: 8,
+    fontSize: 9,
     fontFamily: 'Inter_700Bold',
     letterSpacing: 0.5,
   },
   incrementBtn: {
-    width: 28,
-    height: 28,
     backgroundColor: '#FFFFFF',
     borderWidth: 2,
     borderColor: '#000000',
+  },
+  incrementInner: {
+    width: 32,
+    height: 32,
     justifyContent: 'center',
     alignItems: 'center',
   },
   incrementText: {
     color: '#000000',
     fontFamily: 'Outfit_900Black',
-    fontSize: 16,
+    fontSize: 18,
+    lineHeight: 20,
   },
 });

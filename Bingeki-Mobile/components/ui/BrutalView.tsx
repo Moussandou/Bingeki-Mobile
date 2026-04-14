@@ -11,6 +11,7 @@ interface BrutalViewProps {
   children: React.ReactNode;
   offset?: number;
   backgroundColor?: string;
+  shadowColor?: string;
   borderColor?: string;
   borderWidth?: number;
   borderRadius?: number;
@@ -26,9 +27,11 @@ interface BrutalViewProps {
 export function BrutalView({
   children,
   offset = 4,
+  shadowColor = '#000000',
   isPressed = false,
   style,
   contentStyle,
+  borderRadius,
 }: BrutalViewProps) {
   const contentTranslateX = useSharedValue(0);
   const contentTranslateY = useSharedValue(0);
@@ -69,6 +72,10 @@ export function BrutalView({
       <Animated.View
         style={[
           styles.shadow,
+          { 
+            backgroundColor: shadowColor,
+            borderRadius: borderRadius ?? 0,
+          },
           animatedShadowStyle
         ]}
       />

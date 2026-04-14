@@ -19,6 +19,7 @@ import { useGamificationStore } from '@/store/gamificationStore';
 import { useLibraryStore } from '@/store/libraryStore';
 import { getTopWorks, type JikanResult } from '@/services/api';
 import { calculateRank } from '@/utils/rankUtils';
+import { BrutalView } from '@/components/ui/BrutalView';
 
 export default function DashboardScreen() {
   const router = useRouter();
@@ -61,24 +62,40 @@ export default function DashboardScreen() {
         <Card variant="manga" style={styles.licenseCard}>
           <View style={styles.licenseHeader}>
             <View style={styles.profileSection}>
-              <View style={[styles.avatarBox, { borderColor: borderHeavyColor }]}>
-                  {/* Profile Avatar */}
-                 <IconSymbol name="person.fill" size={40} color={borderHeavyColor} />
-              </View>
+              <BrutalView
+                offset={4}
+                shadowColor={primaryPink}
+                borderRadius={0}
+                contentStyle={[styles.avatarBox, { borderColor: borderHeavyColor }]}
+              >
+                  <IconSymbol name="person.fill" size={40} color={borderHeavyColor} />
+              </BrutalView>
               <View style={styles.nameBlock}>
                 <ThemedText style={styles.licenseName}>{username}</ThemedText>
-                <View style={styles.rankBadge}>
-                   <ThemedText style={styles.rankBadgeText}>RANK {rank}</ThemedText>
+                <View style={styles.badgeRow}>
+                  <BrutalView
+                    offset={2}
+                    borderRadius={0}
+                    style={{ alignSelf: 'flex-start' }}
+                    contentStyle={styles.rankBadge}
+                  >
+                     <ThemedText style={styles.rankBadgeText}>RANK {rank}</ThemedText>
+                  </BrutalView>
+                  
+                  <BrutalView
+                    offset={2}
+                    borderRadius={0}
+                    style={{ alignSelf: 'flex-start' }}
+                    contentStyle={styles.miniStat}
+                  >
+                    <IconSymbol name="flame.fill" size={12} color={primaryPink} />
+                    <ThemedText style={styles.miniStatValue}>{streak}</ThemedText>
+                  </BrutalView>
                 </View>
               </View>
             </View>
             
-            <View style={styles.statSummary}>
-               <View style={styles.miniStat}>
-                  <IconSymbol name="flame.fill" size={12} color={primaryPink} />
-                  <ThemedText style={styles.miniStatValue}>{streak}</ThemedText>
-               </View>
-            </View>
+
           </View>
 
           <View style={styles.xpSection}>
@@ -146,22 +163,36 @@ export default function DashboardScreen() {
 
         <View style={styles.section}>
           <SectionHeader title="EXPLORATION" style={styles.sectionHeader} />
-          <TouchableOpacity
-            style={[styles.searchMock, { borderColor: primaryPink }]}
-            onPress={() => router.push('/discover')}
+          <BrutalView
+            offset={4}
+            borderRadius={0}
+            style={styles.searchContainer}
+            contentStyle={[styles.searchMock, { borderColor: primaryPink }]}
           >
-            <IconSymbol name="magnifyingglass" size={18} color={primaryPink} />
-            <ThemedText style={styles.searchText}>Rechercher dans le catalogue...</ThemedText>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.searchInner}
+              onPress={() => router.push('/discover')}
+              activeOpacity={1}
+            >
+              <IconSymbol name="magnifyingglass" size={18} color={primaryPink} />
+              <ThemedText style={styles.searchText}>Rechercher dans le catalogue...</ThemedText>
+            </TouchableOpacity>
+          </BrutalView>
           <View style={styles.genreRow}>
             {['SHONEN', 'SEINEN', 'ISEKAI', 'ACTION'].map((genre) => (
-              <TouchableOpacity
+              <BrutalView
                 key={genre}
-                style={[styles.genreTag, { borderColor: borderHeavyColor }]}
-                onPress={() => router.push('/discover')}
+                offset={2}
+                borderRadius={0}
+                contentStyle={[styles.genreTag, { borderColor: borderHeavyColor }]}
               >
-                <ThemedText style={styles.genreText}>{genre}</ThemedText>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => router.push('/discover')}
+                  activeOpacity={1}
+                >
+                  <ThemedText style={styles.genreText}>{genre}</ThemedText>
+                </TouchableOpacity>
+              </BrutalView>
             ))}
           </View>
         </View>
@@ -206,7 +237,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   nameBlock: {
-    gap: 4,
+    gap: 8,
+    flex: 1,
+  },
+  badgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
   licenseName: {
     fontSize: 22,
@@ -335,20 +372,19 @@ const styles = StyleSheet.create({
     marginTop: Spacing.lg,
   },
   // Exploration
-  searchMock: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  searchContainer: {
     marginHorizontal: Spacing.md,
     marginBottom: Spacing.md,
-    padding: 12,
+  },
+  searchMock: {
     borderWidth: 2,
-    gap: 10,
     backgroundColor: '#FFFFFF',
-    shadowColor: '#000000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 0,
+  },
+  searchInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    gap: 10,
   },
   searchText: {
     fontFamily: Fonts.body,
@@ -358,19 +394,14 @@ const styles = StyleSheet.create({
   genreRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: 12,
     paddingHorizontal: Spacing.md,
   },
   genreTag: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderWidth: 2,
     backgroundColor: '#FFFFFF',
-    shadowColor: '#000000',
-    shadowOffset: { width: 3, height: 3 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
-    elevation: 0,
   },
   genreText: {
     fontFamily: Fonts.headingBold,

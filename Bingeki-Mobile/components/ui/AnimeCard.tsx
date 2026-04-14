@@ -6,6 +6,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
 import { type JikanResult } from '@/services/api';
+import { BrutalView } from './BrutalView';
 
 interface AnimeCardProps {
   item: JikanResult;
@@ -19,7 +20,7 @@ export function AnimeCard({ item, onPress, width = 130 }: AnimeCardProps) {
       <View style={styles.shadowOuter}>
         {/* SHADOW LAYER */}
         <View style={styles.brutalShadow} />
-        
+
         {/* CONTENT LAYER */}
         <View style={styles.imageContainer}>
           <Image
@@ -28,9 +29,14 @@ export function AnimeCard({ item, onPress, width = 130 }: AnimeCardProps) {
             contentFit="cover"
           />
           {item.score != null ? (
-            <View style={styles.scoreBadge}>
+            <BrutalView
+              offset={2}
+              borderRadius={0}
+              style={styles.scoreBadgeContainer}
+              contentStyle={styles.scoreBadge}
+            >
               <Text style={styles.scoreText}>{item.score}</Text>
-            </View>
+            </BrutalView>
           ) : null}
         </View>
       </View>
@@ -56,17 +62,19 @@ const styles = StyleSheet.create({
     height: '100%',
     borderWidth: 3,
     borderColor: '#000000',
-    backgroundColor: '#000', // Image loading placeholder
+    backgroundColor: '#000',
     overflow: 'hidden',
   },
   image: {
     width: '100%',
     height: '100%',
   },
-  scoreBadge: {
+  scoreBadgeContainer: {
     position: 'absolute',
-    top: -2,
-    right: -2,
+    top: 4,
+    right: 4,
+  },
+  scoreBadge: {
     backgroundColor: '#FF2E63',
     borderWidth: 2,
     borderColor: '#000000',

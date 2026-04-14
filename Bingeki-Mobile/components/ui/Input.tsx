@@ -3,10 +3,11 @@
  * Includes focus effects and icon support
  */
 import React, { useState } from 'react';
-import { StyleSheet, TextInput, View, TextInputProps, ViewStyle } from 'react-native';
-import { Colors, Fonts, Spacing } from '@/constants/theme';
+import { StyleSheet, TextInput, View, TextInputProps, ViewStyle, Pressable } from 'react-native';
+import { Colors, Fonts, Spacing, Borders } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
 import { ThemedText } from '../themed-text';
+import { BrutalView } from './BrutalView';
 
 export interface InputProps extends TextInputProps {
   error?: string | boolean;
@@ -22,9 +23,9 @@ export const Input = React.forwardRef<TextInput, InputProps>(
     const textDimColor = useThemeColor({}, 'textDim');
     const surfaceColor = useThemeColor({}, 'surface');
     const surfaceHoverColor = useThemeColor({}, 'surfaceHover');
-    const primaryGlowColor = useThemeColor({}, 'primaryGlow');
     const primaryColor = useThemeColor({}, 'primary');
     const errorColor = useThemeColor({}, 'error');
+    const borderHeavyColor = useThemeColor({}, 'borderHeavy');
 
     const handleFocus = (e: any) => {
       setIsFocused(true);
@@ -39,7 +40,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
     const getBorderColor = () => {
       if (error) return errorColor;
       if (isFocused) return primaryColor;
-      return 'rgba(0, 0, 0, 0.1)';
+      return borderHeavyColor;
     };
 
     const getBackgroundColor = () => {
@@ -47,38 +48,20 @@ export const Input = React.forwardRef<TextInput, InputProps>(
       return surfaceColor;
     };
 
-    const getShadowStyles = () => {
-      if (error && isFocused) {
-        return {
-          shadowColor: errorColor,
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 0.2,
-          shadowRadius: 2,
-          elevation: 2,
-        };
-      }
-      if (isFocused) {
-        return {
-          shadowColor: primaryGlowColor,
-          shadowOffset: { width: 0, height: 0 },
-          shadowOpacity: 1,
-          shadowRadius: 2,
-          elevation: 2,
-        };
-      }
-      return {};
-    };
-
     return (
       <View style={[styles.wrapper, containerStyle]}>
-        <View
-          style={[
+        <BrutalView
+          isPressed={isFocused}
+          offset={4}
+          borderRadius={Borders.mangaRadius}
+          contentStyle={[
             styles.container,
             {
               backgroundColor: getBackgroundColor(),
               borderColor: getBorderColor(),
-            },
-            getShadowStyles(),
+              borderWidth: Borders.width,
+              borderRadius: Borders.mangaRadius,
+            }
           ]}
         >
           {icon && <View style={styles.icon}>{icon}</View>}
@@ -95,7 +78,7 @@ export const Input = React.forwardRef<TextInput, InputProps>(
             ]}
             {...props}
           />
-        </View>
+        </BrutalView>
         {typeof error === 'string' && (
           <ThemedText style={[styles.errorText, { color: errorColor }]}>
             {error}
@@ -116,10 +99,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 4,
-    minHeight: 48,
-    backgroundColor: 'transparent',
+    minHeight: 52,
   },
   input: {
     flex: 1,
