@@ -5,7 +5,6 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { AnimeCard } from '@/components/ui/AnimeCard';
@@ -50,7 +49,7 @@ export default function DashboardScreen() {
   const xpPct = Math.min((xp / xpToNextLevel) * 100, 100);
 
   return (
-    <BackgroundSystem>
+    <>
       <ScreenHeader title="BINGEKI" subtitle={`BIENVENUE, ${username}`} />
       <ScrollView
         style={styles.container}
@@ -142,7 +141,7 @@ export default function DashboardScreen() {
 
         <View style={styles.bottomPad} />
       </ScrollView>
-    </BackgroundSystem>
+    </>
   );
 }
 

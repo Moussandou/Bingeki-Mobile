@@ -9,6 +9,7 @@ import { ThemedText } from '@/components/themed-text';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
+// Sharp halftone dot pattern
 const DOT_PATTERN = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAADBJREFUOE9jZKAQMFKon2HUw6iHUR8OUw9T3Y0M9DMMpB4mS+8E9TDSBv1IBA0FAwMANH8EAp7W8uIAAAAASUVORK5CYII=';
 
 export function MangaHalftone() {
@@ -19,13 +20,18 @@ export function MangaHalftone() {
     <View style={[StyleSheet.absoluteFill, { opacity }]} pointerEvents="none">
       <Image
         source={{ uri: DOT_PATTERN }}
-        style={[StyleSheet.absoluteFill, { tintColor: dotsColor }]}
-        resizeMode="repeat"
+        style={[
+          styles.fill, 
+          { 
+            tintColor: dotsColor,
+            // @ts-ignore - repeat is a valid resizeMode for Image in RN
+            resizeMode: 'repeat',
+          }
+        ]}
       />
     </View>
   );
 }
-
 
 export function MangaSpeedlines() {
   const color = useThemeColor({}, 'dots');
@@ -35,7 +41,7 @@ export function MangaSpeedlines() {
   const radius = Math.max(SCREEN_WIDTH, SCREEN_HEIGHT);
 
   return (
-    <View style={[StyleSheet.absoluteFill, { opacity: 0.05 }]} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { opacity: 0.04 }]} pointerEvents="none">
       {lines.map((line) => (
         <View
           key={line}
@@ -48,7 +54,7 @@ export function MangaSpeedlines() {
               width: radius,
               transform: [
                 { rotate: `${line * 10}deg` },
-                { translateX: SCREEN_WIDTH * 0.2 }
+                { translateX: SCREEN_WIDTH * 0.25 }
               ]
             }
           ]}
@@ -63,9 +69,9 @@ export function MangaLabels() {
   
   const labels = [
     { text: 'SUIVI !!', top: 120, left: -20, rotate: '-15deg', size: 40 },
-    { text: 'LEVEL UP', top: 350, right: -30, rotate: '10deg', size: 30 },
+    { text: 'LEVEL UP', top: 350, right: -40, rotate: '10deg', size: 30 },
     { text: 'BINGE !!', bottom: 150, left: -10, rotate: '5deg', size: 50 },
-    { text: 'COMMUNAUTÉ', top: SCREEN_HEIGHT * 0.6, right: -40, rotate: '-12deg', size: 25 },
+    { text: 'COMMUNAUTÉ', top: SCREEN_HEIGHT * 0.65, right: -60, rotate: '-12deg', size: 25 },
   ];
 
   return (
@@ -81,7 +87,7 @@ export function MangaLabels() {
               left: label.left,
               right: label.right,
               transform: [{ rotate: label.rotate }],
-              opacity: 0.03,
+              opacity: 0.035,
             }
           ]}
         >
@@ -108,7 +114,9 @@ export function BackgroundSystem({ children }: { children?: React.ReactNode }) {
       <MangaHalftone />
       <MangaSpeedlines />
       <MangaLabels />
-      {children}
+      <View style={styles.content}>
+        {children}
+      </View>
     </View>
   );
 }
@@ -118,13 +126,19 @@ const styles = StyleSheet.create({
     flex: 1,
     overflow: 'hidden',
   },
+  fill: {
+    width: '100%',
+    height: '100%',
+  },
+  content: {
+    flex: 1,
+    zIndex: 1,
+  },
   speedline: {
     position: 'absolute',
     height: 1,
-    opacity: 0.5,
   },
   labelContainer: {
     position: 'absolute',
-    zIndex: -1,
   }
 });

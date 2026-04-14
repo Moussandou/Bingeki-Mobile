@@ -21,7 +21,6 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { ThemedText } from '@/components/themed-text';
-import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 
 export default function RegisterScreen() {
@@ -71,7 +70,7 @@ export default function RegisterScreen() {
     };
 
     return (
-        <BackgroundSystem>
+        <>
             <KeyboardAvoidingView 
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.container}
@@ -148,7 +147,7 @@ export default function RegisterScreen() {
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </BackgroundSystem>
+        </>
     );
 }
 

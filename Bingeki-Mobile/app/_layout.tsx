@@ -1,6 +1,6 @@
 /**
  * Root layout component
- * Global providers, font loading, and splash screen
+ * Global providers, background system, and navigation stacks
  */
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
@@ -14,8 +14,7 @@ import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 import { useAuthSync } from '@/hooks/useAuthSync';
 import { useFirestoreSync } from '@/hooks/useFirestoreSync';
-
-import { useSegments, useRouter } from 'expo-router';
+import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
 import { useAuthStore } from '@/store/authStore';
 
 SplashScreen.preventAutoHideAsync();
@@ -26,10 +25,7 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const segments = useSegments();
-  const router = useRouter();
-  
-  const { user, loading: authLoading } = useAuthStore();
+  const { authLoading } = useAuthStore();
   
   useAuthSync();
   useFirestoreSync();
@@ -42,29 +38,29 @@ export default function RootLayout() {
   });
 
   useEffect(() => {
-    if (authLoading || !loaded) return;
-  }, [user, authLoading, segments, loaded]);
-
-  useEffect(() => {
     if (loaded || error) {
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
 
-  if (!loaded && !error) {
-    return null;
-  }
+  if (!loaded && !error) return null;
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="details/[id]" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
+      <BackgroundSystem>
+        <Stack
+          screenOptions={{
+            contentStyle: { backgroundColor: 'transparent' },
+            headerShown: false,
+          }}
+        >
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="(auth)" />
+          <Stack.Screen name="details/[id]" />
+          <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
+        </Stack>
+      </BackgroundSystem>
       <StatusBar style="auto" />
     </ThemeProvider>
   );
 }
-

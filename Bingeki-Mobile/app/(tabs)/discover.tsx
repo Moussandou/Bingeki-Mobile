@@ -5,7 +5,6 @@
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput, FlatList, ActivityIndicator, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
-import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { SectionHeader } from '@/components/ui/SectionHeader';
 import { AnimeCard } from '@/components/ui/AnimeCard';
@@ -63,7 +62,7 @@ export default function DiscoverScreen() {
     };
 
     return (
-        <BackgroundSystem>
+        <>
             <ScreenHeader title="DÉCOUVRIR" subtitle="ANIME · MANGA · WEBTOON" />
             <View style={styles.container}>
                 <View style={[styles.searchBar, { borderColor: borderHeavyColor, backgroundColor: surfaceColor }]}>
@@ -134,7 +133,7 @@ export default function DiscoverScreen() {
                     </View>
                 </ScrollView>
             </View>
-        </BackgroundSystem>
+        </>
     );
 }
 

@@ -4,7 +4,6 @@
  */
 import { StyleSheet, FlatList, View, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
-import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
 import { ScreenHeader } from '@/components/layout/ScreenHeader';
 import { WorkCard } from '@/components/ui/WorkCard';
 import { ThemedText } from '@/components/themed-text';
@@ -25,7 +24,7 @@ export default function LibraryScreen() {
     };
 
     return (
-        <BackgroundSystem>
+        <>
             <ScreenHeader
                 title="BIBLIOTHÈQUE"
                 subtitle={`${works.length} ŒUVRES EN COURS`}
@@ -60,7 +59,7 @@ export default function LibraryScreen() {
                     </View>
                 )}
             />
-        </BackgroundSystem>
+        </>
     );
 }
 

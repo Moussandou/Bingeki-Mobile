@@ -21,7 +21,6 @@ import { useThemeColor } from '@/hooks/use-theme-color';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
 import { ThemedText } from '@/components/themed-text';
-import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useSocialAuth } from '@/hooks/useSocialAuth';
 import { Card } from '@/components/ui/Card';
@@ -69,7 +68,7 @@ export default function LoginScreen() {
     };
 
     return (
-        <BackgroundSystem>
+        <>
             <KeyboardAvoidingView 
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.container}
@@ -175,7 +174,7 @@ export default function LoginScreen() {
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
-        </BackgroundSystem>
+        </>
     );
 }
 

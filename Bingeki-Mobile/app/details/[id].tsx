@@ -7,7 +7,6 @@ import { StyleSheet, View, ScrollView, TouchableOpacity, ActivityIndicator, Dime
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
-import { BackgroundSystem } from '@/components/layout/BackgroundSystem';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
@@ -125,27 +124,27 @@ export default function DetailsScreen() {
 
     if (loading) {
         return (
-            <BackgroundSystem>
+            <>
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={primaryPink} />
                 </View>
-            </BackgroundSystem>
+            </>
         );
     }
 
     if (!work) {
         return (
-            <BackgroundSystem>
+            <>
                 <View style={[styles.container, styles.center]}>
                     <ThemedText style={styles.title}>INTREUVABLE</ThemedText>
                     <Button title="RETOUR" onPress={() => router.back()} />
                 </View>
-            </BackgroundSystem>
+            </>
         );
     }
 
     return (
-        <BackgroundSystem>
+        <>
             <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} stickyHeaderIndices={[1]}>
 
                 <View style={styles.header}>
@@ -284,7 +283,7 @@ export default function DetailsScreen() {
                     )}
                 </View>
             </ScrollView>
-        </BackgroundSystem>
+        </>
     );
 }
 
