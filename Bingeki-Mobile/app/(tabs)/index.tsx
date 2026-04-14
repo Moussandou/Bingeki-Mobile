@@ -62,7 +62,7 @@ export default function DashboardScreen() {
           <View style={styles.licenseHeader}>
             <View style={styles.profileSection}>
               <View style={[styles.avatarBox, { borderColor: borderHeavyColor }]}>
-                 {/* Avatar placeholder matching screenshot style */}
+                  {/* Profile Avatar */}
                  <IconSymbol name="person.fill" size={40} color={borderHeavyColor} />
               </View>
               <View style={styles.nameBlock}>
@@ -343,8 +343,9 @@ const styles = StyleSheet.create({
     padding: 12,
     borderWidth: 2,
     gap: 10,
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000000',
-    shadowOffset: { width: 2, height: 2 },
+    shadowOffset: { width: 4, height: 4 },
     shadowOpacity: 1,
     shadowRadius: 0,
     elevation: 0,
@@ -364,8 +365,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderWidth: 2,
+    backgroundColor: '#FFFFFF',
     shadowColor: '#000000',
-    shadowOffset: { width: 2, height: 2 },
+    shadowOffset: { width: 3, height: 3 },
     shadowOpacity: 1,
     shadowRadius: 0,
     elevation: 0,

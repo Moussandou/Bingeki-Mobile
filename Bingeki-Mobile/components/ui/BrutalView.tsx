@@ -20,8 +20,8 @@ interface BrutalViewProps {
 }
 
 /**
- * A reusable wrapper that adds a neo-brutalist solid shadow to any content.
- * Handles the "sinking" animation logic consistently.
+ * Reusable neo-brutalist shadow wrapper
+ * Handles consistent sinking animation logic
  */
 export function BrutalView({
   children,
@@ -100,5 +100,6 @@ const styles = StyleSheet.create({
   },
   content: {
     overflow: 'hidden',
+    backgroundColor: '#FFFFFF',
   },
 });

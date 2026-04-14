@@ -1,6 +1,5 @@
 /**
- * Compact anime/manga card
- * Displays title, image, and score for discovery lists
+ * Card component for discovery lists
  */
 import React from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';

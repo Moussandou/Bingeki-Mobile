@@ -1,7 +1,7 @@
 /**
  * Premium Manga Visual System
  * Implements high-fidelity Halftones, Wedge Speedlines, and Animated SFX
- * Refined based on the Bingeki Web CSS specifications.
+ * Implements high-fidelity Halftones, Wedge Speedlines, and Animated SFX
  */
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Dimensions, Platform } from 'react-native';
@@ -20,15 +20,14 @@ import { ThemedText } from '@/components/themed-text';
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 /**
- * Sharp Halftone Dot Overlay
- * Replicates the 20px radial-gradient grid from web
+ * Radial grid dot overlay
  */
 export function MangaHalftone() {
   const dotsColor = useThemeColor({}, 'dots');
   const opacity = useThemeColor({}, 'halftoneOpacity');
 
   return (
-    <View style={[StyleSheet.absoluteFill, { zIndex: 100 }]} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { zIndex: -1 }]} pointerEvents="none">
       <Svg width="100%" height="100%" opacity={opacity}>
         <Defs>
           <Pattern
@@ -49,8 +48,7 @@ export function MangaHalftone() {
 }
 
 /**
- * Thick Wedge Speedlines
- * Radial effect with 10deg gap and 2deg wedge thickness
+ * Radial wedge speedlines
  */
 export function MangaSpeedlines() {
   const color = useThemeColor({}, 'dots');
@@ -64,7 +62,7 @@ export function MangaSpeedlines() {
     const wedges = [];
     for (let i = 0; i < 36; i++) {
         const startDeg = i * 10;
-        const endDeg = startDeg + 2.5; // 2.5 degree thickness for "thick" look
+        const endDeg = startDeg + 2.5; 
         
         const x1 = centerX + radius * Math.cos((startDeg * Math.PI) / 180);
         const y1 = centerY + radius * Math.sin((startDeg * Math.PI) / 180);
@@ -83,7 +81,7 @@ export function MangaSpeedlines() {
   };
 
   return (
-    <View style={[StyleSheet.absoluteFill, { zIndex: 99 }]} pointerEvents="none">
+    <View style={[StyleSheet.absoluteFill, { zIndex: -2 }]} pointerEvents="none">
       <Svg width="100%" height="100%" opacity={opacity}>
         <G>{renderWedges()}</G>
       </Svg>
@@ -92,8 +90,7 @@ export function MangaSpeedlines() {
 }
 
 /**
- * Animated "Waku Waku" SFX Component
- * Triple-layered for Brutalist impact with vibration animation
+ * Animated SFX labels
  */
 function WakuWakuLabel({ text, top, left, right, bottom, rotate, size }: any) {
     const dotsColor = useThemeColor({}, 'dots');
@@ -108,14 +105,13 @@ function WakuWakuLabel({ text, top, left, right, bottom, rotate, size }: any) {
                 }
             ]}
         >
-            {/* Simple Clean Manga SFX - No colored shadows */}
             <ThemedText 
                 style={[
                     styles.sfxText, 
                     { 
                         fontSize: size, 
                         color: dotsColor,
-                        opacity: 0.15, // Subtle background effect
+                        opacity: 0.15,
                     }
                 ]}
             >
@@ -134,7 +130,7 @@ export function MangaSFX() {
     ];
 
     return (
-        <View style={[StyleSheet.absoluteFill, { zIndex: 0 }]} pointerEvents="none">
+        <View style={[StyleSheet.absoluteFill, { zIndex: -3 }]} pointerEvents="none">
             {labels.map((label, i) => (
                 <WakuWakuLabel key={i} {...label} />
             ))}
@@ -147,7 +143,7 @@ export function BackgroundSystem({ children }: { children?: React.ReactNode }) {
 
   return (
     <View style={[styles.container, { backgroundColor: bgColor }]}>
-      {/* 1. Manga Decorative Background Layers (Underneath content) */}
+      {/* Background decoration layers */}
       <MangaHalftone />
       <MangaSpeedlines />
       <MangaSFX />
@@ -167,6 +163,7 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
+    zIndex: 1, // Ensure content is above background layers
   },
   sfxContainer: {
     position: 'absolute',

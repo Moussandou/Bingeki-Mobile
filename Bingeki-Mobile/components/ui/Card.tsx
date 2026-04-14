@@ -5,10 +5,10 @@
 import React from 'react';
 import { StyleSheet, Pressable, ViewStyle, StyleProp, ViewProps, View, Platform } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring, 
+import Animated, {
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
 } from 'react-native-reanimated';
 import { Borders, Shadows } from '@/constants/theme';
 import { useThemeColor } from '@/hooks/use-theme-color';
@@ -24,33 +24,34 @@ export type CardProps = ViewProps & {
   onPress?: () => void;
 };
 
-export function Card({ 
-  children, 
+export function Card({
+  children,
   variant = 'default',
   hoverable = false,
-  onPress, 
-  style, 
-  ...props 
+  onPress,
+  style,
+  ...props
 }: CardProps) {
   const [isPressed, setIsPressed] = React.useState(false);
   const borderColor = useThemeColor({}, 'borderHeavy');
   const backgroundColor = useThemeColor({}, 'surface');
-  
+
   // Extract layout vs card styles
   const flattenedStyle = StyleSheet.flatten(style || {});
   const {
-      margin, marginHorizontal, marginVertical, marginTop, marginBottom, marginLeft, marginRight,
-      flex, flexGrow, flexShrink, flexBasis,
-      width, height, minWidth, minHeight, maxWidth, maxHeight,
-      position, top, left, right, bottom, alignSelf,
-      ...cardStyles
+    margin, marginHorizontal, marginVertical, marginTop, marginBottom, marginLeft, marginRight,
+    flex, flexGrow, flexShrink, flexBasis,
+    width, height, minWidth, minHeight, maxWidth, maxHeight,
+    position, top, left, right, bottom, alignSelf,
+    backgroundColor: styleBg, // Separate background from layout
+    ...cardStyles
   } = flattenedStyle as any;
 
   const layoutStyles = {
-      margin, marginHorizontal, marginVertical, marginTop, marginBottom, marginLeft, marginRight,
-      flex, flexGrow, flexShrink, flexBasis,
-      width, height, minWidth, minHeight, maxWidth, maxHeight,
-      position, top, left, right, bottom, alignSelf,
+    margin, marginHorizontal, marginVertical, marginTop, marginBottom, marginLeft, marginRight,
+    flex, flexGrow, flexShrink, flexBasis,
+    width, height, minWidth, minHeight, maxWidth, maxHeight,
+    position, top, left, right, bottom, alignSelf,
   };
 
   const handlePressIn = () => {
@@ -64,41 +65,44 @@ export function Card({
     setIsPressed(false);
   };
 
-  const renderContent = () => (
-    <BrutalView
+  const renderContent = () => {
+    // Opaque white base for manga variant
+    const bg = variant === 'manga' ? '#FFFFFF' : (cardStyles.backgroundColor || backgroundColor);
+
+    return (
+      <BrutalView
         isPressed={isPressed}
         style={layoutStyles as StyleProp<ViewStyle>}
         contentStyle={[
-            {
-                backgroundColor: cardStyles.backgroundColor || backgroundColor,
-                borderColor: cardStyles.borderColor || borderColor,
-                borderWidth: cardStyles.borderWidth || Borders.width,
-                borderRadius: cardStyles.borderRadius ?? Borders.mangaRadius,
-                padding: cardStyles.padding || 16,
-            },
-            cardStyles
+          {
+            backgroundColor: bg,
+            borderColor: cardStyles.borderColor || borderColor,
+            borderWidth: cardStyles.borderWidth || Borders.width,
+            borderRadius: cardStyles.borderRadius ?? Borders.mangaRadius,
+            padding: cardStyles.padding || 16,
+          },
+          cardStyles
         ]}
-    >
+      >
         {children}
-    </BrutalView>
-  );
+      </BrutalView>
+    );
+  };
 
   if (hoverable || onPress) {
-      return (
-        <Pressable
-            onPress={onPress}
-            onPressIn={handlePressIn}
-            onPressOut={handlePressOut}
-            {...props}
-        >
-            {renderContent()}
-        </Pressable>
-      );
+    return (
+      <Pressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        {...props}
+      >
+        {renderContent()}
+      </Pressable>
+    );
   }
 
   return renderContent();
 }
 
-const styles = StyleSheet.create({
-  // Moved logic to BrutalView
-});
+const styles = StyleSheet.create({});
