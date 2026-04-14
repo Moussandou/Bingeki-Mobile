@@ -96,43 +96,16 @@ export function MangaSpeedlines() {
  * Triple-layered for Brutalist impact with vibration animation
  */
 function WakuWakuLabel({ text, top, left, right, bottom, rotate, size }: any) {
-    const scale = useSharedValue(1);
-    const rotation = useSharedValue(rotate ? parseFloat(rotate) : 0);
     const accentColor = '#FF2E63';
-    const dotsColor = useThemeColor({}, 'dots');
-
-    useEffect(() => {
-        scale.value = withRepeat(
-            withSequence(
-                withTiming(1.05, { duration: 400, easing: Easing.inOut(Easing.ease) }),
-                withTiming(1, { duration: 400, easing: Easing.inOut(Easing.ease) })
-            ),
-            -1,
-            true
-        );
-        rotation.value = withRepeat(
-            withSequence(
-                withTiming((rotation.value || 0) + 2, { duration: 500 }),
-                withTiming((rotation.value || 0) - 2, { duration: 500 })
-            ),
-            -1,
-            true
-        );
-    }, []);
-
-    const animatedStyle = useAnimatedStyle(() => ({
-        transform: [
-            { scale: scale.value },
-            { rotate: `${rotation.value}deg` }
-        ]
-    }));
-
+    
     return (
-        <Animated.View 
+        <View 
             style={[
                 styles.sfxContainer,
-                { top, left, right, bottom },
-                animatedStyle
+                { 
+                    top, left, right, bottom,
+                    transform: [{ rotate: rotate || '0deg' }]
+                }
             ]}
         >
             {/* Layer 1: Red Brutalist Offset Shadow */}
@@ -163,7 +136,7 @@ function WakuWakuLabel({ text, top, left, right, bottom, rotate, size }: any) {
             >
                 {text}
             </ThemedText>
-        </Animated.View>
+        </View>
     );
 }
 
