@@ -167,7 +167,7 @@ export default function LoginScreen() {
                             <Link href="/(auth)/register" asChild>
                                 <TouchableOpacity>
                                     <ThemedText style={[styles.registerLink, { color: primaryPink }]}>
-                                        S'INSCRIRE MAINTENANT
+                                        {"S'INSCRIRE MAINTENANT"}
                                     </ThemedText>
                                 </TouchableOpacity>
                             </Link>
