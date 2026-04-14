@@ -25,6 +25,9 @@ export default function DashboardScreen() {
   const router = useRouter();
   const primaryPink = useThemeColor({}, 'primary');
   const borderHeavyColor = useThemeColor({}, 'borderHeavy');
+  const surfaceColor = useThemeColor({}, 'surface');
+  const textPrimaryColor = useThemeColor({}, 'text');
+  const textSecondaryColor = useThemeColor({}, 'textDim');
 
   const { userProfile } = useAuthStore();
   const { level, xp, xpToNextLevel, streak } = useGamificationStore();
@@ -59,7 +62,7 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <Card variant="manga" style={styles.licenseCard}>
+        <Card variant="manga" style={[styles.licenseCard, { backgroundColor: surfaceColor }]}>
           <View style={styles.licenseHeader}>
             <View style={styles.profileSection}>
               <BrutalView
@@ -167,7 +170,7 @@ export default function DashboardScreen() {
             offset={4}
             borderRadius={0}
             style={styles.searchContainer}
-            contentStyle={[styles.searchMock, { borderColor: primaryPink }]}
+            contentStyle={[styles.searchMock, { borderColor: primaryPink, backgroundColor: surfaceColor }]}
           >
             <TouchableOpacity
               style={styles.searchInner}
@@ -184,7 +187,7 @@ export default function DashboardScreen() {
                 key={genre}
                 offset={2}
                 borderRadius={0}
-                contentStyle={[styles.genreTag, { borderColor: borderHeavyColor }]}
+                contentStyle={[styles.genreTag, { borderColor: borderHeavyColor, backgroundColor: surfaceColor }]}
               >
                 <TouchableOpacity
                   onPress={() => router.push('/discover')}
@@ -215,7 +218,6 @@ const styles = StyleSheet.create({
     marginHorizontal: Spacing.md,
     marginBottom: Spacing.xl,
     padding: 18,
-    backgroundColor: '#FFFFFF',
   },
   licenseHeader: {
     flexDirection: 'row',
@@ -232,7 +234,6 @@ const styles = StyleSheet.create({
     width: 70,
     height: 70,
     borderWidth: 3,
-    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -248,7 +249,6 @@ const styles = StyleSheet.create({
   licenseName: {
     fontSize: 22,
     fontFamily: Fonts.heading,
-    color: '#000000',
     letterSpacing: 0.5,
     textTransform: 'uppercase',
   },
@@ -273,7 +273,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 4,
     borderWidth: 2,
-    borderColor: '#000',
     paddingHorizontal: 8,
     paddingVertical: 2,
   },
@@ -296,9 +295,8 @@ const styles = StyleSheet.create({
   },
   xpBarTrack: {
     height: 10,
-    backgroundColor: 'transparent',
+    opacity: 0.1, // Create a subtle track
     borderWidth: 1.5,
-    borderColor: '#000',
     overflow: 'hidden',
   },
   xpBarFill: {
@@ -310,7 +308,6 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     justifyContent: 'space-between',
     borderTopWidth: 2,
-    borderTopColor: '#000',
     paddingTop: 15,
   },
   statBox: {
@@ -319,14 +316,12 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 8,
     fontFamily: Fonts.bodyBold,
-    color: 'rgba(0,0,0,0.4)',
     letterSpacing: 1.5,
     marginBottom: 4,
   },
   statValue: {
     fontSize: 18,
     fontFamily: Fonts.heading,
-    color: '#000000',
   },
   statSub: {
     fontSize: 12,
@@ -351,7 +346,6 @@ const styles = StyleSheet.create({
   statDivider: {
     width: 2,
     height: 35,
-    backgroundColor: '#000',
     marginHorizontal: 10,
   },
   ctaButton: {
@@ -378,7 +372,6 @@ const styles = StyleSheet.create({
   },
   searchMock: {
     borderWidth: 2,
-    backgroundColor: '#FFFFFF',
   },
   searchInner: {
     flexDirection: 'row',
@@ -401,7 +394,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderWidth: 2,
-    backgroundColor: '#FFFFFF',
   },
   genreText: {
     fontFamily: Fonts.headingBold,

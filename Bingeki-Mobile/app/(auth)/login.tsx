@@ -43,6 +43,8 @@ export default function LoginScreen() {
     } = useSocialAuth();
     const primaryPink = useThemeColor({}, 'primary');
     const borderHeavyColor = useThemeColor({}, 'borderHeavy');
+    const surfaceColor = useThemeColor({}, 'surface');
+    const textPrimaryColor = useThemeColor({}, 'text');
 
     const handleLogin = async () => {
         if (!email || !password) {
@@ -81,15 +83,12 @@ export default function LoginScreen() {
                 >
                     <View style={styles.content}>
 
-                        <View style={styles.header}>
-                            <Image 
-                                source={require('@/assets/images/icon.png')} 
-                                style={styles.logoImage} 
-                                resizeMode="contain"
-                            />
-                            <ThemedText style={styles.logoText}>BINGEKI</ThemedText>
+                            <View style={[styles.logoBox, { backgroundColor: surfaceColor, borderColor: borderHeavyColor }]}>
+                                <ThemedText style={[styles.logoText, { color: textPrimaryColor }]}>BINGEKI</ThemedText>
+                                <View style={[styles.cornerBox, { borderColor: borderHeavyColor }]} />
+                                <View style={[styles.bottomDecorator, { backgroundColor: primaryPink }]} />
+                            </View>
                             <ThemedText style={styles.subtitle}>CHAMPIONS ARE BORN IN THE BINGE</ThemedText>
-                        </View>
 
 
                         <Card variant="manga" style={styles.formCard}>
@@ -137,7 +136,7 @@ export default function LoginScreen() {
 
                                 <View style={styles.socialContainer}>
                                     <TouchableOpacity 
-                                        style={[styles.socialIconBtn, { borderColor: borderHeavyColor }]}
+                                        style={[styles.socialIconBtn, { borderColor: borderHeavyColor, backgroundColor: surfaceColor }]}
                                         onPress={signInWithGoogle}
                                     >
                                         <IconSymbol name="logo-google" size={24} color={borderHeavyColor} />
@@ -206,7 +205,6 @@ const styles = StyleSheet.create({
         borderWidth: 6,
         paddingHorizontal: 25,
         paddingVertical: 10,
-        backgroundColor: '#FFF',
         position: 'relative',
         marginBottom: 20,
         transform: [{ rotate: '-1.5deg' }],
@@ -215,7 +213,6 @@ const styles = StyleSheet.create({
         fontSize: 40,
         fontFamily: Fonts.headingBold,
         letterSpacing: 2,
-        color: '#000',
         fontWeight: '900',
         marginTop: 10,
         textTransform: 'uppercase',
@@ -306,7 +303,6 @@ const styles = StyleSheet.create({
         borderWidth: 3,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#FFF',
     },
     guestLink: {
         alignItems: 'center',

@@ -8,6 +8,8 @@ import { ThemedText } from '@/components/themed-text';
 import { type JikanResult } from '@/services/api';
 import { BrutalView } from './BrutalView';
 
+import { useThemeColor } from '@/hooks/use-theme-color';
+
 interface AnimeCardProps {
   item: JikanResult;
   onPress: () => void;
@@ -15,6 +17,8 @@ interface AnimeCardProps {
 }
 
 export function AnimeCard({ item, onPress, width = 130 }: AnimeCardProps) {
+  const borderHeavy = useThemeColor({}, 'borderHeavy');
+
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={{ width }}>
       <View style={styles.shadowOuter}>
@@ -22,7 +26,7 @@ export function AnimeCard({ item, onPress, width = 130 }: AnimeCardProps) {
         <View style={styles.brutalShadow} />
 
         {/* CONTENT LAYER */}
-        <View style={styles.imageContainer}>
+        <View style={[styles.imageContainer, { borderColor: borderHeavy }]}>
           <Image
             source={item.images?.jpg?.image_url}
             style={styles.image}
@@ -33,7 +37,7 @@ export function AnimeCard({ item, onPress, width = 130 }: AnimeCardProps) {
               offset={2}
               borderRadius={0}
               style={styles.scoreBadgeContainer}
-              contentStyle={styles.scoreBadge}
+              contentStyle={[styles.scoreBadge, { borderColor: borderHeavy }]}
             >
               <Text style={styles.scoreText}>{item.score}</Text>
             </BrutalView>
@@ -61,7 +65,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     borderWidth: 3,
-    borderColor: '#000000',
     backgroundColor: '#000',
     overflow: 'hidden',
   },
@@ -77,7 +80,6 @@ const styles = StyleSheet.create({
   scoreBadge: {
     backgroundColor: '#FF2E63',
     borderWidth: 2,
-    borderColor: '#000000',
     paddingHorizontal: 6,
     paddingVertical: 3,
   },

@@ -2,6 +2,8 @@ import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
 import { Image } from 'expo-image';
 import { type Work } from '@/store/libraryStore';
 import { BrutalView } from './BrutalView';
+import { ThemedText } from '../themed-text';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface WorkCardProps {
   item: Work;
@@ -24,6 +26,11 @@ function getProgressColor(status: Work['status']): string {
 }
 
 export function WorkCard({ item, onPress, onIncrement }: WorkCardProps) {
+  const surface = useThemeColor({}, 'surface');
+  const borderHeavy = useThemeColor({}, 'borderHeavy');
+  const primaryForeground = useThemeColor({}, 'primaryForeground');
+  const textSecondary = useThemeColor({}, 'textDim');
+
   const statusColor = STATUS_COLORS[item.status] ?? STATUS_COLORS.plan_to_read;
   const progressPct = ((item.currentChapter || 0) / (item.totalChapters || 1)) * 100;
 
@@ -32,14 +39,14 @@ export function WorkCard({ item, onPress, onIncrement }: WorkCardProps) {
       <View style={styles.shadowOuter}>
         <View style={styles.brutalShadow} />
 
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: surface, borderColor: borderHeavy }]}>
             <View style={styles.imageArea}>
                 <Image source={item.image} style={styles.image} contentFit="cover" />
                 
                 {item.score != null && (
                     <View style={styles.badgeTopRight}>
-                        <BrutalView offset={2} borderRadius={0} contentStyle={styles.scoreBadge}>
-                            <Text style={styles.badgeText}>{item.score}</Text>
+                        <BrutalView offset={2} borderRadius={0} contentStyle={[styles.scoreBadge, { borderColor: borderHeavy }]}>
+                            <ThemedText style={styles.badgeText}>{item.score}</ThemedText>
                         </BrutalView>
                     </View>
                 )}
@@ -48,31 +55,37 @@ export function WorkCard({ item, onPress, onIncrement }: WorkCardProps) {
                     <BrutalView 
                         offset={2} 
                         borderRadius={0} 
-                        contentStyle={[styles.typeBadge, { backgroundColor: item.type === 'manga' ? '#08D9D6' : '#FF2E63' }]}
+                        contentStyle={[
+                          styles.typeBadge, 
+                          { 
+                            borderColor: borderHeavy,
+                            backgroundColor: item.type === 'manga' ? '#08D9D6' : '#FF2E63' 
+                          }
+                        ]}
                     >
-                        <Text style={[styles.badgeText, styles.typeBadgeText]}>{item.type.toUpperCase()}</Text>
+                        <ThemedText style={[styles.badgeText, styles.typeBadgeText]}>{item.type.toUpperCase()}</ThemedText>
                     </BrutalView>
                 </View>
 
                 <View style={styles.titleOverlay}>
-                    <Text style={styles.titleText} numberOfLines={2}>{item.title}</Text>
+                    <ThemedText style={styles.titleText} numberOfLines={2}>{item.title}</ThemedText>
                 </View>
             </View>
 
             <View style={styles.footer}>
-                <View style={styles.progressBar}>
+                <View style={[styles.progressBar, { borderColor: borderHeavy }]}>
                     <View style={[styles.progressFill, { width: `${progressPct}%`, backgroundColor: getProgressColor(item.status) }]} />
                 </View>
                 <View style={styles.footerRow}>
-                    <BrutalView offset={2} borderRadius={0} contentStyle={[styles.statusBadge, { backgroundColor: statusColor.bg }]}>
-                        <Text style={[styles.statusText, { color: statusColor.text }]}>
+                    <BrutalView offset={2} borderRadius={0} contentStyle={[styles.statusBadge, { backgroundColor: statusColor.bg, borderColor: borderHeavy }]}>
+                        <ThemedText style={[styles.statusText, { color: statusColor.text }]}>
                             {item.status.replace('_', ' ').toUpperCase()}
-                        </Text>
+                        </ThemedText>
                     </BrutalView>
 
-                    <BrutalView offset={2} borderRadius={0} contentStyle={styles.incrementBtn}>
+                    <BrutalView offset={2} borderRadius={0} contentStyle={[styles.incrementBtn, { backgroundColor: surface, borderColor: borderHeavy }]}>
                         <TouchableOpacity onPress={onIncrement} activeOpacity={0.7} style={styles.incrementInner}>
-                            <Text style={styles.incrementText}>+</Text>
+                            <ThemedText style={styles.incrementText}>+</ThemedText>
                         </TouchableOpacity>
                     </BrutalView>
                 </View>
@@ -95,9 +108,7 @@ const styles = StyleSheet.create({
     transform: [{ translateX: 4 }, { translateY: 4 }],
   },
   card: {
-    backgroundColor: '#FFFFFF',
     borderWidth: 3,
-    borderColor: '#000000',
     overflow: 'hidden',
   },
   imageArea: {
@@ -121,13 +132,11 @@ const styles = StyleSheet.create({
   scoreBadge: {
     backgroundColor: '#FF2E63',
     borderWidth: 1.5,
-    borderColor: '#000000',
     paddingHorizontal: 6,
     paddingVertical: 3,
   },
   typeBadge: {
     borderWidth: 1.5,
-    borderColor: '#000000',
     paddingHorizontal: 6,
     paddingVertical: 3,
   },
@@ -159,7 +168,6 @@ const styles = StyleSheet.create({
   progressBar: {
     backgroundColor: '#F0F0F0',
     borderWidth: 1.5,
-    borderColor: '#000000',
     height: 10,
     overflow: 'hidden',
   },
@@ -175,7 +183,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderWidth: 1.5,
-    borderColor: 'rgba(0,0,0,0.2)',
   },
   statusText: {
     fontSize: 9,
@@ -183,9 +190,7 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   incrementBtn: {
-    backgroundColor: '#FFFFFF',
     borderWidth: 2,
-    borderColor: '#000000',
   },
   incrementInner: {
     width: 32,
@@ -194,7 +199,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   incrementText: {
-    color: '#000000',
     fontFamily: 'Outfit_900Black',
     fontSize: 18,
     lineHeight: 20,

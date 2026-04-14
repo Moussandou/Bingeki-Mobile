@@ -66,8 +66,8 @@ export function Card({
   };
 
   const renderContent = () => {
-    // Opaque white base for manga variant
-    const bg = variant === 'manga' ? '#FFFFFF' : (cardStyles.backgroundColor || backgroundColor);
+    // Solid base for manga variant using theme-aware color
+    const bg = variant === 'manga' ? backgroundColor : (cardStyles.backgroundColor || backgroundColor);
 
     return (
       <BrutalView

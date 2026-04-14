@@ -32,6 +32,8 @@ export default function RegisterScreen() {
 
     const primaryPink = useThemeColor({}, 'primary');
     const borderHeavyColor = useThemeColor({}, 'borderHeavy');
+    const surfaceColor = useThemeColor({}, 'surface');
+    const textPrimaryColor = useThemeColor({}, 'text');
 
     const handleRegister = async () => {
         if (!email || !password || !confirmPassword) {
@@ -83,9 +85,9 @@ export default function RegisterScreen() {
                     <View style={styles.content}>
 
                         <View style={styles.header}>
-                            <View style={[styles.headerBox, { borderColor: borderHeavyColor }]}>
-                                <ThemedText style={styles.headerText}>REJOINDRE</ThemedText>
-                                <View style={[styles.cornerBox, { backgroundColor: primaryPink }]} />
+                            <View style={[styles.headerBox, { backgroundColor: surfaceColor, borderColor: borderHeavyColor }]}>
+                                <ThemedText style={[styles.headerText, { color: textPrimaryColor }]}>REJOINDRE</ThemedText>
+                                <View style={[styles.cornerBox, { backgroundColor: primaryPink, borderColor: borderHeavyColor }]} />
                             </View>
                             <ThemedText style={styles.subtitle}>CRÉEZ VOTRE COMPTE BINGEKI</ThemedText>
                         </View>
@@ -172,7 +174,6 @@ const styles = StyleSheet.create({
         borderWidth: 4,
         paddingHorizontal: 20,
         paddingVertical: 10,
-        backgroundColor: '#FFF',
         position: 'relative',
         marginBottom: 15,
         transform: [{ rotate: '2deg' }],
@@ -181,7 +182,6 @@ const styles = StyleSheet.create({
         fontSize: 40,
         fontFamily: Fonts.headingBold,
         letterSpacing: -2,
-        color: '#000',
     },
     cornerBox: {
         position: 'absolute',

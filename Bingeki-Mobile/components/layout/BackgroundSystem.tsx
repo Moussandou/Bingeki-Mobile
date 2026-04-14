@@ -1,7 +1,6 @@
 /**
  * Premium Manga Visual System
  * Implements high-fidelity Halftones, Wedge Speedlines, and Animated SFX
- * Implements high-fidelity Halftones, Wedge Speedlines, and Animated SFX
  */
 import React, { useEffect } from 'react';
 import { StyleSheet, View, Dimensions, Platform } from 'react-native';
@@ -27,7 +26,7 @@ export function MangaHalftone() {
   const opacity = useThemeColor({}, 'halftoneOpacity');
 
   return (
-    <View style={[StyleSheet.absoluteFill, { zIndex: -1 }]} pointerEvents="none">
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
       <Svg width="100%" height="100%" opacity={opacity}>
         <Defs>
           <Pattern
@@ -81,7 +80,7 @@ export function MangaSpeedlines() {
   };
 
   return (
-    <View style={[StyleSheet.absoluteFill, { zIndex: -2 }]} pointerEvents="none">
+    <View style={StyleSheet.absoluteFill} pointerEvents="none">
       <Svg width="100%" height="100%" opacity={opacity}>
         <G>{renderWedges()}</G>
       </Svg>
@@ -130,7 +129,7 @@ export function MangaSFX() {
     ];
 
     return (
-        <View style={[StyleSheet.absoluteFill, { zIndex: -3 }]} pointerEvents="none">
+        <View style={StyleSheet.absoluteFill} pointerEvents="none">
             {labels.map((label, i) => (
                 <WakuWakuLabel key={i} {...label} />
             ))}
@@ -142,14 +141,19 @@ export function BackgroundSystem({ children }: { children?: React.ReactNode }) {
   const bgColor = useThemeColor({}, 'background');
 
   return (
-    <View style={[styles.container, { backgroundColor: bgColor }]}>
-      {/* Background decoration layers */}
-      <MangaHalftone />
-      <MangaSpeedlines />
-      <MangaSFX />
+    <View style={styles.container}>
+      {/* 1. Base Color Layer (Lowest) */}
+      <View style={[StyleSheet.absoluteFill, { backgroundColor: bgColor, zIndex: 0 }]} />
 
-      {/* 2. Main Content Base */}
-      <View style={styles.content}>
+      {/* 2. Manga Decorative Layers (Middle) */}
+      <View style={[StyleSheet.absoluteFill, { zIndex: 1 }]}>
+          <MangaSFX />
+          <MangaSpeedlines />
+          <MangaHalftone />
+      </View>
+
+      {/* 3. Main Content Layer (Top) */}
+      <View style={[styles.content, { zIndex: 2 }]}>
         {children}
       </View>
     </View>

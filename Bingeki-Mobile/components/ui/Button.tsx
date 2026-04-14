@@ -63,7 +63,7 @@ export function Button({
       case 'secondary': return secondaryColor;
       case 'outline': return 'transparent';
       case 'ghost': return 'transparent';
-      case 'manga': return '#FFFFFF'; // Force solid white for Manga
+      case 'manga': return useThemeColor({}, 'surface');
       default: return primaryColor;
     }
   };
@@ -73,7 +73,7 @@ export function Button({
     switch (variant) {
       case 'primary': return '#FFFFFF';
       case 'secondary': return '#1A1A1A';
-      case 'manga': return '#000000';
+      case 'manga': return textColor;
       default: return textColor;
     }
   };

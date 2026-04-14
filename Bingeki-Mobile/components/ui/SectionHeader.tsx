@@ -6,6 +6,8 @@ import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { Fonts } from '@/constants/theme';
 import { IconSymbol } from './icon-symbol';
+import { ThemedText } from '../themed-text';
+import { useThemeColor } from '@/hooks/use-theme-color';
 
 interface SectionHeaderProps {
   title: string;
@@ -14,16 +16,19 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({ title, count, style }: SectionHeaderProps) {
+  const borderHeavy = useThemeColor({}, 'borderHeavy');
+  const textDim = useThemeColor({}, 'textDim');
+
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.title}>{title}</Text>
+      <ThemedText style={styles.title}>{title}</ThemedText>
       {count !== undefined ? (
-        <View style={styles.countBadge}>
-          <Text style={styles.countText}>+{count}</Text>
+        <View style={[styles.countBadge, { borderColor: borderHeavy }]}>
+          <ThemedText style={styles.countText}>+{count}</ThemedText>
         </View>
       ) : null}
       <View style={styles.spacer} />
-      <IconSymbol name="plus.circle" size={12} color="rgba(0,0,0,0.3)" />
+      <IconSymbol name="plus.circle" size={12} color={textDim} />
     </View>
   );
 }
@@ -38,21 +43,17 @@ const styles = StyleSheet.create({
   title: {
     fontFamily: Fonts.heading,
     fontSize: 16,
-    color: '#000000',
     letterSpacing: 1,
     textTransform: 'uppercase',
   },
   countBadge: {
-    backgroundColor: '#FFFFFF',
     borderWidth: 1.5,
-    borderColor: '#000000',
     paddingHorizontal: 6,
     paddingVertical: 1,
   },
   countText: {
     fontFamily: Fonts.bodyBold,
     fontSize: 9,
-    color: '#000000',
   },
   spacer: {
     flex: 1,

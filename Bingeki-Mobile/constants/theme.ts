@@ -7,22 +7,26 @@ import { Platform } from 'react-native';
 
 const primaryPink = '#FF2E63';
 const secondaryCyan = '#08D9D6';
+const darkAccent = '#252A34';
 
 export const Colors = {
   light: {
-    text: '#1a1a1a',
+    text: '#1A1A1A',
     textDim: '#666666',
-    background: '#FFFFFF',
+    background: '#F5F5F5', // Paper aspect
     tint: primaryPink,
-    icon: '#1a1a1a',
+    icon: '#1A1A1A',
     tabIconDefault: '#666666',
     tabIconSelected: primaryPink,
-    border: '#e5e5e5',
+    border: '#E5E5E5',
     borderHeavy: '#000000',
-    surface: '#ffffff',
-    surfaceHover: '#e8e8e8',
+    surface: '#FFFFFF',
+    surfaceHover: '#E8E8E8',
     primary: primaryPink,
     secondary: secondaryCyan,
+    darkAccent: darkAccent,
+    primaryForeground: '#FFFFFF',
+    secondaryForeground: '#1A1A1A',
     primaryGlow: 'rgba(255, 46, 99, 0.5)',
     error: '#ff3333',
     dots: '#000000',
@@ -30,24 +34,27 @@ export const Colors = {
     speedlinesOpacity: 0.05,
   },
   dark: {
-    text: '#e0e0e0',
-    textDim: '#a0a0a0',
+    text: '#E0E0E0',
+    textDim: '#A0A0A0',
     background: '#121212',
     tint: primaryPink,
-    icon: '#e0e0e0',
-    tabIconDefault: '#a0a0a0',
+    icon: '#E0E0E0',
+    tabIconDefault: '#A0A0A0',
     tabIconSelected: primaryPink,
     border: '#333333',
-    borderHeavy: '#ffffff',
-    surface: '#1e1e1e',
-    surfaceHover: '#2d2d2d',
+    borderHeavy: '#444444', // Dark mode specific brutal border
+    surface: '#1E1E1E',
+    surfaceHover: '#2D2D2D',
     primary: primaryPink,
     secondary: secondaryCyan,
+    darkAccent: darkAccent,
+    primaryForeground: '#FFFFFF',
+    secondaryForeground: '#1A1A1A',
     primaryGlow: 'rgba(255, 46, 99, 0.5)',
     error: '#ff3333',
-    dots: '#ffffff',
-    halftoneOpacity: 0.08,
-    speedlinesOpacity: 0.04,
+    dots: '#FFFFFF',
+    halftoneOpacity: 0.05,
+    speedlinesOpacity: 0.03,
   },
 };
 
