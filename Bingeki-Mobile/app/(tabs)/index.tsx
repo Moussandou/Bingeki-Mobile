@@ -69,6 +69,7 @@ export default function DashboardScreen() {
                 offset={4}
                 shadowColor={primaryPink}
                 borderRadius={0}
+                style={styles.avatarWrapper}
                 contentStyle={[styles.avatarBox, { borderColor: borderHeavyColor }]}
               >
                   <IconSymbol name="person.fill" size={40} color={borderHeavyColor} />
@@ -80,16 +81,16 @@ export default function DashboardScreen() {
                     offset={2}
                     borderRadius={0}
                     style={{ alignSelf: 'flex-start' }}
-                    contentStyle={styles.rankBadge}
+                    contentStyle={[styles.rankBadge, { borderColor: borderHeavyColor, backgroundColor: surfaceColor }]}
                   >
-                     <ThemedText style={styles.rankBadgeText}>RANK {rank}</ThemedText>
+                     <ThemedText style={[styles.rankBadgeText, { color: borderHeavyColor }]}>RANK {rank}</ThemedText>
                   </BrutalView>
                   
                   <BrutalView
                     offset={2}
                     borderRadius={0}
                     style={{ alignSelf: 'flex-start' }}
-                    contentStyle={styles.miniStat}
+                    contentStyle={[styles.miniStat, { borderColor: borderHeavyColor, backgroundColor: surfaceColor }]}
                   >
                     <IconSymbol name="flame.fill" size={12} color={primaryPink} />
                     <ThemedText style={styles.miniStatValue}>{streak}</ThemedText>
@@ -214,6 +215,7 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 120,
   },
+  avatarWrapper: {},
   licenseCard: {
     marginHorizontal: Spacing.md,
     marginBottom: Spacing.xl,
@@ -253,17 +255,14 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
   },
   rankBadge: {
-    backgroundColor: '#E8F5E9',
-    paddingHorizontal: 6,
+    paddingHorizontal: 8,
     paddingVertical: 2,
     alignSelf: 'flex-start',
-    borderWidth: 1,
-    borderColor: '#4CAF50',
+    borderWidth: 2,
   },
   rankBadgeText: {
-    fontSize: 8,
-    fontFamily: Fonts.bodyBold,
-    color: '#4CAF50',
+    fontSize: 9,
+    fontFamily: Fonts.headingBold,
   },
   statSummary: {
     alignItems: 'flex-end',

@@ -12,7 +12,6 @@ export const handleProgressUpdateWithXP = (
     totalChapters?: number | null
 ) => {
     const { getWork, updateProgress, updateStatus } = useLibraryStore.getState();
-    const { recordActivity, recalculateStats } = useGamificationStore.getState();
 
     const work = getWork(workId);
     if (!work) return false;
@@ -39,11 +38,11 @@ export const handleProgressUpdateWithXP = (
     }
 
     // Recalculate XP from full works list
-    recordActivity();
-    
-
-    const updatedWorks = useLibraryStore.getState().works;
-    recalculateStats(updatedWorks);
+    const addedChapters = newProgress - oldProgress;
+    if (addedChapters > 0) {
+        const { addChapters } = useGamificationStore.getState();
+        addChapters(addedChapters);
+    }
 
     return true;
 };

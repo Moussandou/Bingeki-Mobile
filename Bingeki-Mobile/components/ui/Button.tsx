@@ -48,7 +48,11 @@ export function Button({
   const primaryColor = useThemeColor({}, 'primary');
   const secondaryColor = useThemeColor({}, 'secondary');
   const textColor = useThemeColor({}, 'text');
+  const textDimColor = useThemeColor({}, 'textDim');
+  const surfaceColor = useThemeColor({}, 'surface');
+  const borderColor = useThemeColor({}, 'border');
   const borderHeavyColor = useThemeColor({}, 'borderHeavy');
+  const secondaryForeground = useThemeColor({}, 'secondaryForeground');
   
   const contentTranslateX = useSharedValue(0);
   const contentTranslateY = useSharedValue(0);
@@ -57,22 +61,22 @@ export function Button({
   const scale = useSharedValue(1);
 
   const getBackgroundColor = () => {
-    if (disabled) return useThemeColor({}, 'border');
+    if (disabled) return borderColor;
     switch (variant) {
       case 'primary': return primaryColor;
       case 'secondary': return secondaryColor;
       case 'outline': return 'transparent';
       case 'ghost': return 'transparent';
-      case 'manga': return useThemeColor({}, 'surface');
+      case 'manga': return surfaceColor;
       default: return primaryColor;
     }
   };
 
   const getTextColor = () => {
-    if (disabled) return useThemeColor({}, 'textDim');
+    if (disabled) return textDimColor;
     switch (variant) {
       case 'primary': return '#FFFFFF';
-      case 'secondary': return '#1A1A1A';
+      case 'secondary': return secondaryForeground;
       case 'manga': return textColor;
       default: return textColor;
     }
