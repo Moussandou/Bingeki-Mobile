@@ -27,7 +27,7 @@ export function MangaHalftone() {
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
-      <Svg width="100%" height="100%" opacity={opacity}>
+      <Svg width="100%" height="100%" opacity={Math.max(Number(opacity) || 0, 0.15)}>
         <Defs>
           <Pattern
             id="halftone"
@@ -167,7 +167,8 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-    zIndex: 1, // Ensure content is above background layers
+    zIndex: 2,
+    backgroundColor: 'transparent',
   },
   sfxContainer: {
     position: 'absolute',

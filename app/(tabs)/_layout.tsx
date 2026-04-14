@@ -17,7 +17,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: 'transparent' }}>
       <Tabs
         tabBar={(props) => <MobileNav {...props} />}
         screenOptions={{
@@ -25,6 +25,7 @@ export default function TabLayout() {
           headerShown: false,
           tabBarButton: HapticTab,
         }}
+        // @ts-ignore - sceneContainerStyle is supported but missing from expo-router types
         sceneContainerStyle={{ backgroundColor: 'transparent' }}>
         <Tabs.Screen
           name="index"

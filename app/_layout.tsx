@@ -45,8 +45,16 @@ export default function RootLayout() {
 
   if (!loaded && !error) return null;
 
+  const navTheme = {
+    ...(colorScheme === 'dark' ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(colorScheme === 'dark' ? DarkTheme.colors : DefaultTheme.colors),
+      background: 'transparent',
+    },
+  };
+
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+    <ThemeProvider value={navTheme}>
       <BackgroundSystem>
         <Stack
           screenOptions={{
