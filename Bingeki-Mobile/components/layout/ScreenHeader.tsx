@@ -1,7 +1,12 @@
+/**
+ * ScreenHeader layout component
+ * Full-width red banner header with safe area insets, title, optional subtitle, and right slot
+ */
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Fonts } from '@/constants/theme';
+import { Fonts, Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 interface ScreenHeaderProps {
   title: string;
@@ -12,15 +17,17 @@ interface ScreenHeaderProps {
 
 export function ScreenHeader({ title, subtitle, rightElement, style }: ScreenHeaderProps) {
   const insets = useSafeAreaInsets();
+  const colorScheme = useColorScheme();
+  const borderColor = Colors[colorScheme ?? 'light'].borderHeavy;
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 10 }, style]}>
+    <View style={[styles.container, { paddingTop: insets.top + 10, borderBottomColor: borderColor }, style]}>
       <View style={styles.row}>
         <View style={styles.titleBlock}>
           <Text style={styles.title}>{title}</Text>
           {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         </View>
-        {rightElement ?? null}
+        {rightElement}
       </View>
     </View>
   );
@@ -32,7 +39,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingBottom: 10,
     borderBottomWidth: 2,
-    borderBottomColor: '#000000',
+    borderBottomColor: '#000000', // overridden at runtime by theme
   },
   row: {
     flexDirection: 'row',
