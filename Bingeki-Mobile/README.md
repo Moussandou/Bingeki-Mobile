@@ -1,50 +1,119 @@
-# Welcome to your Expo app 👋
+# ⚡ BINGEKI MOBILE
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+[![Expo](https://img.shields.io/badge/Expo-000020?style=for-the-badge&logo=expo&logoColor=white)](https://expo.dev/)
+[![React Native](https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactnative.dev/)
+[![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white)](https://firebase.google.com/)
 
-## Get started
+**Bingeki Mobile** is a premium anime and manga tracking application built with a **Manga Brutalist** aesthetic. It combines high-octane visual design with seamless performance to help you discover, track, and level up your otaku journey.
 
-1. Install dependencies
+---
 
+## ✨ Features
+
+- **🎨 Manga Brutalist UI**: A unique, high-contrast design system featuring halftone patterns, speedlines, and heavy-stroke brutalist elements.
+- **🚀 Real-time Tracking**: Sync your progress (chapters/episodes) instantly across devices.
+- **📊 Gamification System**: Earn XP, level up your rank, and maintain your streak as you consume content.
+- **🔍 Deep Exploration**: Search thousands of anime and manga titles powered by the **Jikan API (MyAnimeList)**.
+- **🔐 Secure Sync**: Firebase-powered authentication to keep your library and stats safe.
+- **🎭 Dynamic Themes**: Fully responsive design with support for Light and Dark modes.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Expo](https://expo.dev/) (SDK 54)
+- **Library**: [React Native](https://reactnative.dev/) (v0.81)
+- **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+- **Database/Auth**: [Firebase](https://firebase.google.com/)
+- **Animations**: [React Native Reanimated](https://docs.swmansion.com/react-native-reanimated/)
+- **Styling**: Native Styles with custom **Brutalist Component System**
+- **Data Source**: [Jikan API](https://jikan.moe/)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- [Node.js](https://nodejs.org/) (LTS)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
+- [Expo Go](https://expo.dev/go) app on your device (or an emulator)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/your-username/Bingeki-Mobile.git
+   cd Bingeki-Mobile
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-2. Start the app
+3. **Environment Setup**
+   Create a `.env` file in the root directory and add your Firebase/API keys:
+   ```env
+   EXPO_PUBLIC_FIREBASE_API_KEY=your_key
+   EXPO_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
+   ...
+   ```
 
+4. **Start the development server**
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+---
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+## 📂 Project Structure
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+├── app/               # Expo Router pages (File-based routing)
+│   ├── (auth)/        # Authentication screens (Login/Register)
+│   ├── (tabs)/        # Main application tabs (Home, Discover, Library)
+│   └── details/       # Anime/Manga detail screens
+├── components/        # Reusable UI components
+│   ├── layout/        # Branding, Headers, and Backgrounds
+│   └── ui/            # Brutalist component system (Buttons, Cards, Views)
+├── constants/         # Theme tokens and global constants
+├── hooks/             # Custom React hooks
+├── services/          # API and Firebase integrations
+├── store/             # Zustand state management
+└── utils/             # Helper functions and logic
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 🖌️ Design Philosophy: "Manga Brutalist"
 
-To learn more about developing your project with Expo, look at the following resources:
+Bingeki-Mobile isn't just an app; it's a visual statement. We've merged the raw, unapologetic energy of **Neo-Brutalism** with the iconic visual language of **Japanese Manga**. Expect:
+- **Halftone Patterns**: Classic screen-tone dots for depth.
+- **Speedlines**: Kinetic energy reflected in UI transitions.
+- **Heavy Borders**: Thick, comic-style outlines on every interactive element.
+- **SFX Typography**: High-impact text overlays for an immersive experience.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+---
 
-## Join the community
+## 🤝 Contributing
 
-Join our community of developers creating universal apps.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📜 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+<p align="center">
+  Built with ❤️ for the Otaku community by <b>Moussandou</b>
+</p>
