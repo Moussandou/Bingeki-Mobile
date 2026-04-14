@@ -1,4 +1,9 @@
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+/**
+ * Compact anime/manga card
+ * Displays title, image, and score for discovery lists
+ */
+import React from 'react';
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
 import { ThemedText } from '@/components/themed-text';
 import { type JikanResult } from '@/services/api';

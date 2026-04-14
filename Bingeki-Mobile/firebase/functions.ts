@@ -1,6 +1,5 @@
 /**
- * Firebase callable function bindings for mobile
- * Ported from V2
+ * Firebase callable function bindings
  */
 import { httpsCallable } from 'firebase/functions';
 import { functions } from './config';

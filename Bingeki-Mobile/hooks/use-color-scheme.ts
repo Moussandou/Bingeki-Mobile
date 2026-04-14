@@ -1,5 +1,4 @@
 /**
- * Color scheme hook
- * Wrapper for the native color scheme hook
+ * Native color scheme hook wrapper
  */
 export { useColorScheme } from 'react-native';

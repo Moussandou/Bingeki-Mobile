@@ -1,52 +1,19 @@
 /**
- * Firebase Firestore module for mobile
- * Ported from V2 - Handles profile, library, and gamification sync
+ * Firestore data operations
+ * Handles user profiles, library data, and gamification state syncing
  */
-import { doc, setDoc, getDoc, updateDoc, onSnapshot } from 'firebase/firestore';
+import { 
+    doc, 
+    getDoc, 
+    setDoc, 
+    onSnapshot 
+} from 'firebase/firestore';
 import { db } from './config';
 import { logger } from '@/utils/logger';
-import type { Work, Folder } from '@/store/libraryStore';
-import type { FavoriteCharacter } from '@/types/character';
-import {
-    mergeGamificationData,
-    mergeLibraryData,
-    validateGamificationWrite,
-    logDataBackup,
-    type GamificationData
-} from '@/utils/dataProtection';
+import { Work, Folder } from '@/store/libraryStore';
+import { GamificationData, LibraryData, validateGamificationWrite, mergeGamificationData, mergeLibraryData, logDataBackup } from '@/utils/dataProtection';
+import { UserProfile } from '@/store/authStore';
 
-// Types for Firestore data
-export interface UserProfile {
-    uid: string;
-    email: string | null;
-    displayName: string | null;
-    photoURL: string | null;
-    lastLogin: number;
-    xp?: number;
-    level?: number;
-    totalXp?: number;
-    streak?: number;
-    badges?: { id: string; name: string; description: string; icon: string; rarity: string; unlockedAt?: number }[];
-    totalChaptersRead?: number;
-    totalAnimeEpisodesWatched?: number;
-    totalMoviesWatched?: number;
-    totalWorksAdded?: number;
-    totalWorksCompleted?: number;
-    bio?: string;
-    isAdmin?: boolean;
-    createdAt?: number;
-}
-
-export interface LibraryData {
-    works: Work[];
-    folders?: Folder[];
-    viewMode?: 'grid' | 'list';
-    sortBy?: string;
-    lastUpdated: number;
-    version?: number;
-}
-
-// Get User Profile by UID
 export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     try {
         const docRef = doc(db, 'users', uid);
@@ -61,7 +28,6 @@ export async function getUserProfile(uid: string): Promise<UserProfile | null> {
     }
 }
 
-// Subscribe to User Profile (Real-time)
 export function subscribeToUserProfile(uid: string, callback: (profile: UserProfile | null) => void): () => void {
     const docRef = doc(db, 'users', uid);
     return onSnapshot(docRef, (docSnap) => {
@@ -76,7 +42,6 @@ export function subscribeToUserProfile(uid: string, callback: (profile: UserProf
     });
 }
 
-// Save user profile to Firestore
 export async function saveUserProfileToFirestore(user: Partial<UserProfile>): Promise<void> {
     try {
         if (!user.uid) return;
@@ -106,7 +71,6 @@ export async function saveUserProfileToFirestore(user: Partial<UserProfile>): Pr
     }
 }
 
-// Save library data to Firestore
 export async function saveLibraryToFirestore(
     userId: string, 
     works: Work[], 
@@ -133,7 +97,6 @@ export async function saveLibraryToFirestore(
     }
 }
 
-// Save gamification data to Firestore
 export async function saveGamificationToFirestore(
     userId: string,
     data: Omit<GamificationData, 'lastUpdated'>
@@ -176,7 +139,6 @@ export async function saveGamificationToFirestore(
     }
 }
 
-// Load library data from Firestore
 export async function loadLibraryFromFirestore(userId: string): Promise<Work[] | null> {
     try {
         const docRef = doc(db, 'users', userId, 'data', 'library');
@@ -191,7 +153,6 @@ export async function loadLibraryFromFirestore(userId: string): Promise<Work[] |
     }
 }
 
-// Load gamification data from Firestore
 export async function loadGamificationFromFirestore(userId: string): Promise<Omit<GamificationData, 'lastUpdated'> | null> {
     try {
         const docRef = doc(db, 'users', userId, 'data', 'gamification');

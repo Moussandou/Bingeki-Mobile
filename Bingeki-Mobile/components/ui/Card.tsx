@@ -98,7 +98,7 @@ export function Card({
     };
   });
 
-  // Android shadow fallback
+
   const renderShadow = () => {
     if (Platform.OS !== 'android') return null;
     

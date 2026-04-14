@@ -1,6 +1,6 @@
 /**
- * External link component
- * Opens links in the system browser or in-app browser on native platforms
+ * External link support
+ * Opens links in system or in-app browser
  */
 import { Href, Link } from 'expo-router';
 import { openBrowserAsync, WebBrowserPresentationStyle } from 'expo-web-browser';

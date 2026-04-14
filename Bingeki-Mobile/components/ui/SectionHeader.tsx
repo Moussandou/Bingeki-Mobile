@@ -1,3 +1,7 @@
+/**
+ * Section header component
+ * Combines MangaTitle with a count badge and accent line
+ */
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { MangaTitle } from './MangaTitle';

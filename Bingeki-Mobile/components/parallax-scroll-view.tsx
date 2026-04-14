@@ -1,6 +1,6 @@
 /**
  * ScrollView with parallax header effect
- * Animates header background and image based on scroll position
+ * Animates header background and image on scroll
  */
 import type { PropsWithChildren, ReactElement } from 'react';
 import { StyleSheet } from 'react-native';

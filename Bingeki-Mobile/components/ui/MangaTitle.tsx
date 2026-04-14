@@ -1,6 +1,5 @@
 /**
- * MangaTitle component
- * Bold rotated label — always red (#FF2E63) with white text and brutal 3×3 shadow
+ * Bold rotated label with brutalist shadow
  */
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle, TextStyle } from 'react-native';

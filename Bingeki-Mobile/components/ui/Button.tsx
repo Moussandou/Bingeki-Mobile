@@ -1,6 +1,6 @@
 /**
  * Unified button component
- * Supports multiple variants including manga-style brutalist design
+ * Supports multiple variants including manga-style design
  */
 import React from 'react';
 import { StyleSheet, Pressable, ViewStyle, TextStyle, ActivityIndicator, View, StyleProp, Platform } from 'react-native';
@@ -101,7 +101,7 @@ export function Button({
         { translateX: translationX.value },
         { translateY: translationY.value },
       ],
-      // Native shadow
+
       shadowOffset: {
         width: shadowOffsetX.value,
         height: shadowOffsetY.value,
@@ -175,7 +175,7 @@ export function Button({
     };
   });
 
-  // Android shadow fallback
+
   const renderShadow = () => {
     if (!isManga || Platform.OS !== 'android' || disabled) return null;
     

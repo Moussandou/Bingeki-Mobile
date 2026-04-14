@@ -1,6 +1,6 @@
 /**
  * User login screen
- * Handles user identification and session start with Brutalist Manga UI
+ * Supports email and social authentication
  */
 import React, { useState } from 'react';
 import { 
@@ -80,7 +80,7 @@ export default function LoginScreen() {
                     showsVerticalScrollIndicator={false}
                 >
                     <View style={styles.content}>
-                        {/* Huge Branding Section */}
+
                         <View style={styles.header}>
                             <View style={[styles.logoBox, { borderColor: borderHeavyColor }]}>
                                 <ThemedText style={styles.logoText}>BINGEKI</ThemedText>
@@ -90,7 +90,7 @@ export default function LoginScreen() {
                             <ThemedText style={styles.subtitle}>CHAMPIONS ARE BORN IN THE BINGE</ThemedText>
                         </View>
 
-                        {/* Form in a Manga Panel Card */}
+
                         <Card variant="manga" style={styles.formCard}>
                             <View style={styles.cardHeader}>
                                 <ThemedText style={styles.formTitle}>CONNEXION</ThemedText>
@@ -161,7 +161,7 @@ export default function LoginScreen() {
                             </View>
                         </Card>
 
-                        {/* Footer */}
+
                         <View style={styles.footer}>
                             <ThemedText style={styles.footerText}>PAS ENCORE DE COMPTE ?</ThemedText>
                             <Link href="/(auth)/register" asChild>

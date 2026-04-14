@@ -1,5 +1,5 @@
 /**
- * Console wrapper: silences logs in production, keeps errors always
+ * Simple logger wrapper
  */
 const isDev = __DEV__;
 

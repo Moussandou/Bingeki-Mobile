@@ -1,10 +1,9 @@
 /**
- * Safe merge strategies for library and gamification data
- * Prevents data loss during local/cloud conflict resolution
- * Adapted for mobile (AsyncStorage instead of sessionStorage)
+ * Data merge strategies for library and gamification state
+ * Resolves conflicts between local and cloud data
  */
 import { logger } from '@/utils/logger';
-import type { Work } from '@/store/libraryStore';
+import type { Work, Folder } from '@/store/libraryStore';
 import type { Badge } from '@/types/badge';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -14,7 +13,7 @@ export interface GamificationData {
     totalXp: number;
     xpToNextLevel: number;
     streak: number;
-    lastActivityDate: string | null;
+    lastActivityDate: number | string | null;
     bonusXp: number;
     badges: Badge[];
     totalChaptersRead: number;
@@ -28,6 +27,7 @@ export interface GamificationData {
 
 export interface LibraryData {
     works: Work[];
+    folders: Folder[];
     lastUpdated?: number;
     version?: number;
 }

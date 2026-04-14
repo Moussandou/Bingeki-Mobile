@@ -1,6 +1,5 @@
 /**
- * Theme color resolver hook
- * Provides the correct color token based on the current system theme (light/dark)
+ * Resolves theme colors based on current system appearance
  */
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';

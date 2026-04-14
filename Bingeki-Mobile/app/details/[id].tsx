@@ -1,7 +1,6 @@
 /**
  * Work Details Screen
- * Displays detailed information about an anime or manga
- * Mirror of V2 WorkDetails.tsx for mobile
+ * Displays info and progress for a specific anime or manga
  */
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
@@ -50,7 +49,7 @@ export default function DetailsScreen() {
     const { getWork, addWork, removeWork, updateStatus } = useLibraryStore();
     const libraryWork = getWork(Number(id));
 
-    // Merge logic same as V2 line 325
+    // Sync library data with fresh API details
     const work = libraryWork ? {
         ...libraryWork,
         ...(fetchedWork ? {
@@ -70,7 +69,7 @@ export default function DetailsScreen() {
 
     const loadDetails = async () => {
         setLoading(true);
-        const data = await getWorkDetails(Number(id), 'anime'); // Default to anime, can detect from search/library
+        const data = await getWorkDetails(Number(id), 'anime');
         if (data) {
             setFetchedWork({
                 id: data.mal_id,
@@ -148,7 +147,7 @@ export default function DetailsScreen() {
     return (
         <BackgroundSystem>
             <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent} stickyHeaderIndices={[1]}>
-                {/* Header with Poster */}
+
                 <View style={styles.header}>
                     <TouchableOpacity style={[styles.backButton, { borderColor: borderHeavyColor }]} onPress={() => router.back()}>
                         <IconSymbol name="chevron.left" size={24} color={textColor} />
@@ -207,7 +206,7 @@ export default function DetailsScreen() {
                     )}
                 </View>
 
-                {/* Tabs */}
+
                 <View style={[styles.tabs, { backgroundColor: surfaceColor, borderBottomColor: borderHeavyColor }]}>
                     <TouchableOpacity 
                         style={[styles.tab, activeTab === 'info' && { borderBottomColor: primaryPink, borderBottomWidth: 4 }]}
@@ -223,7 +222,7 @@ export default function DetailsScreen() {
                     </TouchableOpacity>
                 </View>
 
-                {/* Content */}
+
                 <View style={styles.content}>
                     {activeTab === 'info' ? (
                         <View style={styles.infoSection}>

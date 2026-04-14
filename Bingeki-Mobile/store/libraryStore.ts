@@ -1,7 +1,6 @@
 /**
- * Library store: works, folders, and favorite characters
- * Persisted to AsyncStorage, synced to Firestore
- * Adapted for mobile from V2
+ * Library store: works, folders, and characters
+ * Handles persistence and Firestore synchronization
  */
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';

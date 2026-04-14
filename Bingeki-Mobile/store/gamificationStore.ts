@@ -1,58 +1,43 @@
 /**
- * Gamification store: XP, levels, streaks, badges, and stat tracking
- * Recalculated from library works; syncs with Firestore profile
- * Adapted for React Native with AsyncStorage
+ * Gamification store: levels, XP, streaks, and achievements
  */
-import { logger } from '@/utils/logger';
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { type Badge, MOCK_BADGES } from '@/types/badge';
-import { type Work } from '@/store/libraryStore';
+import { UserProfile } from './authStore';
+import { Badge } from '@/types/badge';
 
-interface GamificationState {
+export interface GamificationState {
     level: number;
     xp: number;
     totalXp: number;
     xpToNextLevel: number;
-    bonusXp: number;
     streak: number;
-    lastActivityDate: string | null;
+    lastActivityDate: number | string | null;
     badges: Badge[];
-    recentUnlock: Badge | null;
-    lastLevel: number;
-    xpGained: { amount: number; timestamp: number } | null;
-    levelUpData: { newLevel: number; timestamp: number } | null;
-
     totalChaptersRead: number;
-    totalAnimeEpisodesWatched: number;
-    totalMoviesWatched: number;
     totalWorksAdded: number;
     totalWorksCompleted: number;
+    totalAnimeEpisodesWatched: number;
+    totalMoviesWatched: number;
+    bonusXp: number;
 
-    addXp: (amount: number, isBonus?: boolean) => void;
-    recordActivity: () => void;
-    unlockBadge: (badgeId: string) => void;
-    clearRecentUnlock: () => void;
-    incrementStat: (stat: 'chapters' | 'episodes' | 'movies' | 'works' | 'completed') => void;
-    checkBadges: () => void;
+    xpGained: number;
+    levelUpData: { oldLevel: number, newLevel: number } | null;
+    recentUnlock: Badge | null;
+
+    addXp: (amount: number, reason?: string) => void;
+    addChapters: (count: number) => void;
+    addAnimeEpisode: (id: number | string) => void;
+    addWorksAdded: (count: number) => void;
+    addWorksCompleted: (count: number) => void;
+    clearLevelUp: () => void;
     resetStore: () => void;
-    recalculateStats: (works: Work[]) => void;
-    clearLevelUpData: () => void;
-    clearXpGained: () => void;
-    syncFromProfile: (profile: any) => void;
+    syncFromProfile: (profile: Partial<UserProfile>) => void;
 }
 
 const LEVEL_BASE = 100;
 const LEVEL_MULTIPLIER = 1.15;
-const MAX_LEVEL = 100;
-
-export const XP_REWARDS = {
-    ADD_WORK: 15,
-    UPDATE_PROGRESS: 5,
-    COMPLETE_WORK: 50,
-    DAILY_LOGIN: 25,
-};
 
 export const useGamificationStore = create<GamificationState>()(
     persist(
@@ -61,190 +46,89 @@ export const useGamificationStore = create<GamificationState>()(
             xp: 0,
             totalXp: 0,
             xpToNextLevel: LEVEL_BASE,
-            bonusXp: 0,
             streak: 0,
             lastActivityDate: null,
             badges: [],
-            recentUnlock: null,
-            lastLevel: 1,
-            xpGained: null,
-            levelUpData: null,
             totalChaptersRead: 0,
-            totalAnimeEpisodesWatched: 0,
-            totalMoviesWatched: 0,
             totalWorksAdded: 0,
             totalWorksCompleted: 0,
+            totalAnimeEpisodesWatched: 0,
+            totalMoviesWatched: 0,
+            bonusXp: 0,
 
-            addXp: (amount, isBonus = false) => {
-                const { xp, xpToNextLevel, level, bonusXp } = get();
-                if (isBonus) set({ bonusXp: bonusXp + amount });
+            xpGained: 0,
+            levelUpData: null,
+            recentUnlock: null,
 
-                let newXp = Math.max(0, xp + amount);
-                let newLevel = level;
-                let newXpToNext = xpToNextLevel;
+            addXp: (amount) => set((state) => {
+                let newXp = state.xp + amount;
+                let newLevel = state.level;
+                let newXpToNext = state.xpToNextLevel;
 
-                while (newXp >= newXpToNext && newLevel < MAX_LEVEL) {
+                while (newXp >= newXpToNext) {
                     newXp -= newXpToNext;
                     newLevel++;
                     newXpToNext = Math.floor(newXpToNext * LEVEL_MULTIPLIER);
                 }
 
-                const newTotalXp = calculateCumulativeXp(newLevel, newXp);
-
-                set({
+                return {
                     xp: newXp,
                     level: newLevel,
-                    totalXp: newTotalXp,
                     xpToNextLevel: newXpToNext,
-                    lastLevel: level,
-                    xpGained: { amount, timestamp: Date.now() },
-                    levelUpData: newLevel > level ? { newLevel, timestamp: Date.now() } : get().levelUpData
-                });
-            },
-
-            recordActivity: () => {
-                const { lastActivityDate, streak, addXp } = get();
-                const now = new Date();
-                const localTodayStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
-
-                if (lastActivityDate) {
-                    const lastDate = new Date(lastActivityDate);
-                    const lastLocalStr = `${lastDate.getFullYear()}-${lastDate.getMonth() + 1}-${lastDate.getDate()}`;
-                    if (localTodayStr === lastLocalStr) return;
-                }
-
-                let newStreak = 1;
-                if (lastActivityDate) {
-                    const lastDate = new Date(lastActivityDate);
-                    const hoursDiff = (now.getTime() - lastDate.getTime()) / (1000 * 60 * 60);
-                    if (hoursDiff <= 48) newStreak = streak + 1;
-                }
-
-                set({ streak: newStreak, lastActivityDate: now.toISOString() });
-                const streakBonus = Math.min((newStreak - 1) * 5, 100);
-                addXp(XP_REWARDS.DAILY_LOGIN + streakBonus, true);
-            },
-
-            unlockBadge: (badgeId) => {
-                const { badges } = get();
-                if (badges.find(b => b.id === badgeId)) return;
-                const badge = MOCK_BADGES.find(b => b.id === badgeId);
-                if (badge) {
-                    set({
-                        badges: [...badges, { ...badge, unlockedAt: Date.now() }],
-                        recentUnlock: badge
-                    });
-                }
-            },
-
-            clearRecentUnlock: () => set({ recentUnlock: null }),
-            clearLevelUpData: () => set({ levelUpData: null }),
-            clearXpGained: () => set({ xpGained: null }),
-
-            incrementStat: (stat) => {
-                const state = get();
-                if (stat === 'chapters') set({ totalChaptersRead: state.totalChaptersRead + 1 });
-                else if (stat === 'episodes') set({ totalAnimeEpisodesWatched: state.totalAnimeEpisodesWatched + 1 });
-                else if (stat === 'movies') set({ totalMoviesWatched: state.totalMoviesWatched + 1 });
-                else if (stat === 'works') set({ totalWorksAdded: state.totalWorksAdded + 1 });
-                else if (stat === 'completed') set({ totalWorksCompleted: state.totalWorksCompleted + 1 });
-                get().checkBadges();
-            },
-
-            checkBadges: () => {}, // Handled server-side
-
-            resetStore: () => set({
-                level: 1, xp: 0, totalXp: 0, xpToNextLevel: LEVEL_BASE, bonusXp: 0, streak: 0,
-                lastActivityDate: null, badges: [], recentUnlock: null, totalChaptersRead: 0,
-                totalAnimeEpisodesWatched: 0, totalWorksAdded: 0, totalWorksCompleted: 0
+                    totalXp: state.totalXp + amount,
+                    xpGained: state.xpGained + amount,
+                    levelUpData: newLevel > state.level ? { oldLevel: state.level, newLevel } : state.levelUpData
+                };
             }),
 
-            recalculateStats: (works) => {
-                let chapters = 0;
-                let episodes = 0;
-                let movies = 0;
-                const worksAdded = works.length;
-                let worksCompleted = 0;
-                let calculatedXp = 0;
-
-                works.forEach(w => {
-                    const progress = w.currentChapter || 0;
-                    const total = w.totalChapters;
-                    const type = w.type ? w.type.toLowerCase() : 'manga';
-
-                    let effectiveProgress = (total && total > 0) ? Math.min(progress, total) : 0;
-
-                    if (type === 'manga') {
-                        chapters += progress;
-                        calculatedXp += effectiveProgress * XP_REWARDS.UPDATE_PROGRESS;
-                    } else if (type === 'anime') {
-                        if (w.format === 'Movie') {
-                            movies += progress;
-                            calculatedXp += Math.min(progress, 1) * XP_REWARDS.UPDATE_PROGRESS;
-                        } else {
-                            episodes += progress;
-                            calculatedXp += effectiveProgress * XP_REWARDS.UPDATE_PROGRESS;
-                        }
-                    }
-                    if (w.status === 'completed') worksCompleted++;
-                });
-
-                calculatedXp += worksAdded * XP_REWARDS.ADD_WORK;
-                calculatedXp += worksCompleted * XP_REWARDS.COMPLETE_WORK;
-                calculatedXp += get().bonusXp || 0;
-
-                let simLevel = 1;
-                let simXp = calculatedXp;
-                let simXpToNext = LEVEL_BASE;
-
-                while (simXp >= simXpToNext && simLevel < MAX_LEVEL) {
-                    simXp -= simXpToNext;
-                    simLevel++;
-                    simXpToNext = Math.floor(simXpToNext * LEVEL_MULTIPLIER);
-                }
-
-                const prevTotalXp = get().totalXp;
-                const newTotalXp = calculateCumulativeXp(simLevel, simXp);
-
-                if (works.length === 0 && prevTotalXp > 100) return;
-
-                const didIncreaseXP = newTotalXp > prevTotalXp;
-                const xpGainGuesstimate = didIncreaseXP ? Math.min(100, Math.floor(newTotalXp - prevTotalXp)) : 0;
-
-                set({
-                    totalChaptersRead: chapters,
-                    totalAnimeEpisodesWatched: episodes,
-                    totalMoviesWatched: movies,
-                    totalWorksAdded: worksAdded,
-                    totalWorksCompleted: worksCompleted,
-                    xp: simXp,
-                    level: simLevel,
-                    totalXp: newTotalXp,
-                    xpToNextLevel: simXpToNext,
-                    lastLevel: get().level,
-                    ...(didIncreaseXP && xpGainGuesstimate <= 100 ? {
-                        xpGained: { amount: xpGainGuesstimate, timestamp: Date.now() },
-                        levelUpData: simLevel > get().level ? { newLevel: simLevel, timestamp: Date.now() } : get().levelUpData
-                    } : (simLevel > get().level ? { levelUpData: { newLevel: simLevel, timestamp: Date.now() } } : {}))
-                });
+            addChapters: (count) => {
+                get().addXp(count * 5, 'Read Chapters');
+                set((s) => ({ totalChaptersRead: s.totalChaptersRead + count }));
             },
 
-            syncFromProfile: (profile: any) => {
-                if (!profile || (profile.level === undefined && profile.xp === undefined)) return;
-                const level = profile.level || 1;
-                const xp = profile.xp || 0;
-                const totalXp = profile.totalXp || calculateCumulativeXp(level, xp);
-                if (get().totalXp > totalXp) return;
+            addAnimeEpisode: (id) => {
+                get().addXp(10, 'Watched Episode');
+                set((s) => ({ totalAnimeEpisodesWatched: s.totalAnimeEpisodesWatched + 1 }));
+            },
 
-                let xpToNext = LEVEL_BASE;
-                for (let i = 1; i < level; i++) xpToNext = Math.floor(xpToNext * LEVEL_MULTIPLIER);
+            addWorksAdded: (count) => {
+                get().addXp(count * 20, 'Added Works');
+                set((s) => ({ totalWorksAdded: s.totalWorksAdded + count }));
+            },
 
+            addWorksCompleted: (count) => {
+                get().addXp(count * 100, 'Completed Works');
+                set((s) => ({ totalWorksCompleted: s.totalWorksCompleted + count }));
+            },
+
+            clearLevelUp: () => set({ levelUpData: null, xpGained: 0, recentUnlock: null }),
+
+            resetStore: () => set({
+                level: 1,
+                xp: 0,
+                totalXp: 0,
+                xpToNextLevel: LEVEL_BASE,
+                streak: 0,
+                lastActivityDate: null,
+                badges: [],
+                totalChaptersRead: 0,
+                totalWorksAdded: 0,
+                totalWorksCompleted: 0,
+                totalAnimeEpisodesWatched: 0,
+                totalMoviesWatched: 0,
+                bonusXp: 0,
+                xpGained: 0,
+                levelUpData: null,
+                recentUnlock: null
+            }),
+
+            syncFromProfile: (profile) => {
                 set({
-                    level, xp, totalXp, xpToNextLevel: xpToNext,
-                    streak: profile.streak || 0,
-                    lastActivityDate: profile.lastActivityDate || get().lastActivityDate,
-                    bonusXp: profile.bonusXp ?? get().bonusXp,
-                    badges: profile.badges || [],
+                    level: profile.level ?? get().level,
+                    xp: profile.xp ?? get().xp,
+                    totalXp: profile.totalXp ?? get().totalXp,
+                    streak: profile.streak ?? get().streak,
+                    lastActivityDate: profile.lastActivityDate ?? get().lastActivityDate,
                     totalChaptersRead: profile.totalChaptersRead ?? get().totalChaptersRead,
                     totalAnimeEpisodesWatched: profile.totalAnimeEpisodesWatched ?? get().totalAnimeEpisodesWatched,
                     totalMoviesWatched: profile.totalMoviesWatched ?? get().totalMoviesWatched,

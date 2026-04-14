@@ -1,6 +1,6 @@
 /**
  * Root layout component
- * Handles global providers, font loading, and splash screen
+ * Global providers, font loading, and splash screen
  */
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { Stack } from 'expo-router';
@@ -29,10 +29,8 @@ export default function RootLayout() {
   const segments = useSegments();
   const router = useRouter();
   
-  // Auth state
   const { user, loading: authLoading } = useAuthStore();
   
-  // Initialize Firebase sync hooks
   useAuthSync();
   useFirestoreSync();
 
@@ -43,19 +41,8 @@ export default function RootLayout() {
     Inter_700Bold,
   });
 
-  // Redirection Logic
   useEffect(() => {
     if (authLoading || !loaded) return;
-
-    // const inAuthGroup = segments[0] === '(auth)';
-
-    // if (!user && !inAuthGroup) {
-    //   // Not logged in, redirect to login
-    //   router.replace('/(auth)/login');
-    // } else if (user && inAuthGroup) {
-    //   // Logged in, redirect to tabs
-    //   router.replace('/(tabs)');
-    // }
   }, [user, authLoading, segments, loaded]);
 
   useEffect(() => {

@@ -1,6 +1,6 @@
 /**
  * User registration screen
- * Handles new account creation with Brutalist Manga UI
+ * Handles account creation with Brutalist Manga UI
  */
 import React, { useState } from 'react';
 import { 
@@ -82,7 +82,7 @@ export default function RegisterScreen() {
                     showsVerticalScrollIndicator={false}
                 >
                     <View style={styles.content}>
-                        {/* Header Section */}
+
                         <View style={styles.header}>
                             <View style={[styles.headerBox, { borderColor: borderHeavyColor }]}>
                                 <ThemedText style={styles.headerText}>REJOINDRE</ThemedText>
@@ -91,7 +91,7 @@ export default function RegisterScreen() {
                             <ThemedText style={styles.subtitle}>CRÉEZ VOTRE COMPTE BINGEKI</ThemedText>
                         </View>
 
-                        {/* Form Section */}
+
                         <View style={styles.form}>
                             <ThemedText style={styles.label}>EMAIL</ThemedText>
                             <Input
@@ -134,7 +134,7 @@ export default function RegisterScreen() {
                             />
                         </View>
 
-                        {/* Footer Section */}
+
                         <View style={styles.footer}>
                             <ThemedText style={styles.footerText}>DÉJÀ UN COMPTE ?</ThemedText>
                             <Link href="/(auth)/login" asChild>

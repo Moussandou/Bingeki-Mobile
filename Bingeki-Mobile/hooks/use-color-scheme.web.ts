@@ -1,6 +1,5 @@
 /**
- * Web-specific color scheme hook
- * Handles hydration to avoid mismatch during static rendering
+ * Web-specific color scheme hook to avoid hydration mismatches
  */
 import { useEffect, useState } from 'react';
 import { useColorScheme as useRNColorScheme } from 'react-native';

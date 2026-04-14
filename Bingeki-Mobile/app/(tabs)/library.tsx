@@ -1,3 +1,7 @@
+/**
+ * User library screen
+ * Manages followed works and reading/watching progress
+ */
 import { StyleSheet, FlatList, View, TouchableOpacity } from 'react-native';
 import { useRouter } from 'expo-router';
 import { BackgroundSystem } from '@/components/layout/BackgroundSystem';

@@ -1,6 +1,6 @@
 /**
  * Form input component
- * Features glass-style borders and glow effects on focus
+ * Includes focus effects and icon support
  */
 import React, { useState } from 'react';
 import { StyleSheet, TextInput, View, TextInputProps, ViewStyle } from 'react-native';

@@ -1,6 +1,6 @@
 /**
  * Visual background system
- * Provides manga-style effects like halftones and speedlines
+ * Manga-style effects including halftones and speedlines
  */
 import React from 'react';
 import { StyleSheet, View, Dimensions, Image, Platform } from 'react-native';

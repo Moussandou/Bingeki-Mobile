@@ -1,3 +1,7 @@
+/**
+ * Content discovery screen
+ * Features search and trending anime/manga lists
+ */
 import { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput, FlatList, ActivityIndicator, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';

@@ -1,6 +1,6 @@
 /**
  * Global design system tokens
- * Defines colors, spacing, borders, shadows, and fonts for the Brutalist Manga system
+ * Brutalist Manga styling: colors, spacing, borders, shadows, and fonts
  */
 
 import { Platform } from 'react-native';
@@ -70,7 +70,7 @@ export const Shadows = {
     shadowOffset: { width: 6, height: 6 },
     shadowOpacity: 1,
     shadowRadius: 0,
-    elevation: 0, // Used with custom back-view on Android
+    elevation: 0,
   },
   brutalPressed: {
     shadowColor: primaryPink,
@@ -89,7 +89,7 @@ export const Shadows = {
 };
 
 export const Fonts = {
-  heading: 'Outfit_900Black', // Manga titles are 900
+  heading: 'Outfit_900Black',
   headingBold: 'Outfit_700Bold',
   body: 'Inter_400Regular',
   bodyBold: 'Inter_700Bold',

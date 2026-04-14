@@ -1,6 +1,6 @@
 /**
  * Main application tab navigator
- * Defines the primary navigation structure and bottom tab bar
+ * Defines primary navigation and bottom tab bar
  */
 import { Tabs } from 'expo-router';
 import React from 'react';

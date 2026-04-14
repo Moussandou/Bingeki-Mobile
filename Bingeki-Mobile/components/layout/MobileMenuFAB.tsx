@@ -42,7 +42,6 @@ export function MobileMenuFAB() {
 
   const toggleMenu = () => {
     const nextState = !isOpen;
-    // Timing + Expo Out to avoid wobble
     animation.value = withTiming(nextState ? 1 : 0, { 
       duration: 300,
       easing: Easing.out(Easing.exp) 
@@ -89,7 +88,6 @@ export function MobileMenuFAB() {
   };
 
   const handleItemPress = (route: string) => {
-    // Synchronized close animation
     animation.value = withTiming(0, { 
       duration: 250,
       easing: Easing.out(Easing.exp) 
@@ -97,7 +95,6 @@ export function MobileMenuFAB() {
     
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     
-    // Wait for animation start
     setTimeout(() => {
       setIsOpen(false);
       router.push(route as any);
@@ -106,7 +103,7 @@ export function MobileMenuFAB() {
 
   return (
     <>
-      {/* Backdrop */}
+
       <Animated.View style={[styles.fullScreenOverlay, overlayStyle]}>
         <TouchableWithoutFeedback onPress={toggleMenu}>
           <BlurView 
@@ -118,7 +115,7 @@ export function MobileMenuFAB() {
       </Animated.View>
 
       <View style={styles.container} pointerEvents="box-none">
-        {/* Menu Items */}
+
         <Animated.View 
           style={[styles.menuWrapper, menuAnimatedStyle]} 
           pointerEvents={isOpen ? 'auto' : 'none'}
@@ -155,7 +152,7 @@ export function MobileMenuFAB() {
           </ScrollView>
         </Animated.View>
 
-        {/* FAB Button */}
+
         <Pressable onPress={toggleMenu} style={styles.fabWrapper}>
           <Animated.View 
             style={[
@@ -219,11 +216,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   fabWrapper: {
-    // Sharp shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 4, height: 4 },
-    shadowOpacity: 1,
-    shadowRadius: 0,
     elevation: 8,
   },
   fab: {

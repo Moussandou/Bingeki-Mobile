@@ -1,6 +1,6 @@
 /**
  * ScreenHeader layout component
- * Full-width red banner header with safe area insets, title, optional subtitle, and right slot
+ * Red banner with title and safe area support
  */
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingBottom: 10,
     borderBottomWidth: 2,
-    borderBottomColor: '#000000', // overridden at runtime by theme
+    borderBottomColor: '#000000',
   },
   row: {
     flexDirection: 'row',

@@ -1,6 +1,5 @@
 /**
- * Animated waving emoji component
- * Simple decorative animation for greeting sections
+ * Animated waving emoji for greetings
  */
 import Animated from 'react-native-reanimated';
 

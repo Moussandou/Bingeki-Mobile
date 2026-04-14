@@ -1,5 +1,5 @@
 /**
- * Badge type definitions
+ * Badge and achievement types
  */
 export interface Badge {
     id: string;
@@ -7,37 +7,31 @@ export interface Badge {
     description: string;
     icon: string;
     rarity: 'common' | 'rare' | 'epic' | 'legendary';
-    unlockedAt?: number; // Timestamp
+    category: 'chapters' | 'streak' | 'total' | 'special' | 'works';
+    unlockedAt?: number;
 }
 
 export const MOCK_BADGES: Badge[] = [
-    // Starter badges
-    { id: 'first_steps', name: 'Premiers Pas', description: 'Créer un compte Bingeki', icon: 'flag', rarity: 'common' },
-    { id: 'first_work', name: 'Bibliophile', description: 'Ajouter votre première œuvre', icon: 'book', rarity: 'common' },
+    { id: 'first_steps', name: 'First Steps', description: 'Create a Bingeki account', icon: 'flag', rarity: 'common', category: 'special' },
+    { id: 'first_work', name: 'Bibliophile', description: 'Add your first work', icon: 'book', rarity: 'common', category: 'works' },
 
-    // Progress badges
-    { id: 'reader_5', name: 'Lecteur Assidu', description: 'Lire 5 chapitres', icon: 'book-open', rarity: 'common' },
-    { id: 'reader_25', name: 'Dévoreur', description: 'Lire 25 chapitres', icon: 'flame', rarity: 'rare' },
-    { id: 'reader_100', name: 'Binge Reader', description: 'Lire 100 chapitres', icon: 'zap', rarity: 'epic' },
+    { id: 'reader_5', name: 'Steady Reader', description: 'Read 5 chapters', icon: 'book-open', rarity: 'common', category: 'chapters' },
+    { id: 'reader_25', name: 'Devourer', description: 'Read 25 chapters', icon: 'flame', rarity: 'rare', category: 'chapters' },
+    { id: 'reader_100', name: 'Binge Reader', description: 'Read 100 chapters', icon: 'zap', rarity: 'epic', category: 'chapters' },
 
-    // Collection badges
-    { id: 'collector_5', name: 'Collectionneur', description: 'Ajouter 5 œuvres', icon: 'library', rarity: 'common' },
-    { id: 'collector_10', name: 'Amateur', description: 'Ajouter 10 œuvres', icon: 'layers', rarity: 'rare' },
-    { id: 'collector_25', name: 'Otaku', description: 'Ajouter 25 œuvres', icon: 'database', rarity: 'epic' },
+    { id: 'collector_5', name: 'Collector', description: 'Add 5 works', icon: 'library', rarity: 'common', category: 'works' },
+    { id: 'collector_10', name: 'Amateur', description: 'Add 10 works', icon: 'layers', rarity: 'rare', category: 'works' },
+    { id: 'collector_25', name: 'Otaku', description: 'Add 25 works', icon: 'database', rarity: 'epic', category: 'works' },
 
-    // Streak badges
-    { id: 'streak_3', name: 'Régulier', description: 'Maintenir un streak de 3 jours', icon: 'timer', rarity: 'common' },
-    { id: 'streak_7', name: 'Motivé', description: 'Maintenir un streak de 7 jours', icon: 'calendar-check', rarity: 'rare' },
-    { id: 'streak_30', name: 'Inarrêtable', description: 'Maintenir un streak de 30 jours', icon: 'crown', rarity: 'legendary' },
+    { id: 'streak_3', name: 'Regular', description: 'Maintain a 3-day streak', icon: 'timer', rarity: 'common', category: 'streak' },
+    { id: 'streak_7', name: 'Motivated', description: 'Maintain a 7-day streak', icon: 'calendar-check', rarity: 'rare', category: 'streak' },
+    { id: 'streak_30', name: 'Unstoppable', description: 'Maintain a 30-day streak', icon: 'crown', rarity: 'legendary', category: 'streak' },
 
-    // Completion badges
-    { id: 'first_complete', name: 'Finisher', description: 'Terminer votre première œuvre', icon: 'check-circle', rarity: 'common' },
-    { id: 'complete_5', name: 'Complétiste', description: 'Terminer 5 œuvres', icon: 'target', rarity: 'rare' },
+    { id: 'first_complete', name: 'Finisher', description: 'Complete your first work', icon: 'check-circle', rarity: 'common', category: 'works' },
+    { id: 'complete_5', name: 'Completist', description: 'Complete 5 works', icon: 'target', rarity: 'rare', category: 'works' },
 
-    // Level badges
-    { id: 'level_5', name: 'Novice', description: 'Atteindre le niveau 5', icon: 'star', rarity: 'common' },
-    { id: 'level_10', name: 'Apprenti', description: 'Atteindre le niveau 10', icon: 'medal', rarity: 'rare' },
-    { id: 'level_25', name: 'Expert', description: 'Atteindre le niveau 25', icon: 'award', rarity: 'epic' },
-    { id: 'level_50', name: 'Légende', description: 'Atteindre le niveau 50', icon: 'trophy', rarity: 'legendary' },
+    { id: 'level_5', name: 'Novice', description: 'Reach level 5', icon: 'star', rarity: 'common', category: 'total' },
+    { id: 'level_10', name: 'Apprentice', description: 'Reach level 10', icon: 'medal', rarity: 'rare', category: 'total' },
+    { id: 'level_25', name: 'Expert', description: 'Reach level 25', icon: 'award', rarity: 'epic', category: 'total' },
+    { id: 'level_50', name: 'Legend', description: 'Reach level 50', icon: 'trophy', rarity: 'legendary', category: 'total' },
 ];
-

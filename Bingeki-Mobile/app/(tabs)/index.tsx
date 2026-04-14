@@ -1,3 +1,7 @@
+/**
+ * Main dashboard screen
+ * Displays user stats, trending content, and quick exploration tags
+ */
 import { useState, useEffect } from 'react';
 import { StyleSheet, ScrollView, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
@@ -53,9 +57,7 @@ export default function DashboardScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        {/* HUNTER LICENSE — Gamification Card */}
         <View style={styles.licenseCard}>
-          {/* Header row */}
           <View style={styles.licenseHeader}>
             <View>
               <ThemedText style={styles.licenseLabel}>HUNTER LICENSE</ThemedText>
@@ -67,7 +69,6 @@ export default function DashboardScreen() {
             </View>
           </View>
 
-          {/* XP Bar */}
           <View style={styles.xpSection}>
             <View style={styles.xpLabels}>
               <ThemedText style={styles.xpLabel}>LVL {level}</ThemedText>
@@ -78,7 +79,6 @@ export default function DashboardScreen() {
             </View>
           </View>
 
-          {/* Stats row */}
           <View style={styles.statsRow}>
             <View style={styles.statBox}>
               <ThemedText style={styles.statValue}>{streak}</ThemedText>
@@ -97,7 +97,6 @@ export default function DashboardScreen() {
           </View>
         </View>
 
-        {/* LE Q.G. — Trending */}
         <View style={styles.section}>
           <SectionHeader title="LE Q.G." count={Math.min(trending.length, 8)} style={styles.sectionHeader} />
           {trendingLoading ? (
@@ -119,7 +118,6 @@ export default function DashboardScreen() {
           )}
         </View>
 
-        {/* EXPLORATION — Genre pills */}
         <View style={styles.section}>
           <SectionHeader title="EXPLORATION" style={styles.sectionHeader} />
           <TouchableOpacity

@@ -1,5 +1,5 @@
 /**
- * Abstract icon component
+ * Universal icon component
  * Maps SF Symbols (iOS) to Material Icons (Android/Web)
  */
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';

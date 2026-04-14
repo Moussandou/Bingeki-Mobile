@@ -1,6 +1,5 @@
 /**
  * User rank calculation and styling
- * Maps levels to ranks (F to SSS) and assigns representative colors
  */
 
 export type Rank = 'F' | 'E' | 'D' | 'C' | 'B' | 'A' | 'S' | 'SS' | 'SSS';
@@ -19,15 +18,15 @@ export function calculateRank(level: number): Rank {
 
 export function getRankColor(rank: Rank): string {
   switch (rank) {
-    case 'SSS': return '#FFD700'; // Gold
-    case 'SS': return '#FF4500';  // OrangeRed
-    case 'S': return '#FF2E63';   // Primary Pink
-    case 'A': return '#A020F0';   // Purple
-    case 'B': return '#0000FF';   // Blue
-    case 'C': return '#08D9D6';   // Secondary Cyan
-    case 'D': return '#4CAF50';   // Green
-    case 'E': return '#8BC34A';   // Light Green
-    case 'F': return '#9E9E9E';   // Grey
+    case 'SSS': return '#FFD700';
+    case 'SS': return '#FF4500';
+    case 'S': return '#FF2E63';
+    case 'A': return '#A020F0';
+    case 'B': return '#0000FF';
+    case 'C': return '#08D9D6';
+    case 'D': return '#4CAF50';
+    case 'E': return '#8BC34A';
+    case 'F': return '#9E9E9E';
     default: return '#9E9E9E';
   }
 }

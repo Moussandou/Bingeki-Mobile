@@ -1,6 +1,6 @@
 /**
  * Themed text component
- * Standardized typography with automatic light/dark mode support
+ * Standardized typography with light/dark mode support
  */
 import { StyleSheet, Text, type TextProps } from 'react-native';
 

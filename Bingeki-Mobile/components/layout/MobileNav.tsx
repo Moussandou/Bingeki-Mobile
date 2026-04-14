@@ -1,6 +1,6 @@
 /**
  * Custom bottom navigation bar
- * Compact capsule-style tab bar with haptic feedback
+ * Compact capsule-style tab bar with haptics
  */
 import React from 'react';
 import { View, StyleSheet, Pressable } from 'react-native';
@@ -12,7 +12,6 @@ import { IconSymbol } from '../ui/icon-symbol';
 export function MobileNav({ state, descriptors, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
 
-  // Only show specific routes
   const validRoutes = ['index', 'discover', 'library'];
   const routes = state.routes.filter(route => validRoutes.includes(route.name));
 

@@ -1,6 +1,6 @@
 /**
  * Haptic-enabled tab button
- * Provides tactile feedback on press for navigation tabs
+ * Tactile feedback for navigation tabs
  */
 import { BottomTabBarButtonProps } from '@react-navigation/bottom-tabs';
 import { PlatformPressable } from '@react-navigation/elements';

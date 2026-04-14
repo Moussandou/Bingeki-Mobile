@@ -1,7 +1,5 @@
 /**
- * Syncs Firebase auth state with local stores on login/logout
- * Merges cloud + local data to avoid overwrites
- * Ported from V2
+ * Syncs Firebase auth state with local stores
  */
 import { useEffect, useRef } from 'react';
 import { onAuthStateChanged } from 'firebase/auth';
@@ -40,7 +38,6 @@ export function useAuthSync() {
                     const cloudWorks = await loadLibraryFromFirestore(firebaseUser.uid);
                     const cloudGamification = await loadGamificationFromFirestore(firebaseUser.uid);
 
-                    // Smart merge: prefer latest data from either side
                     const mergedLibrary = mergeLibraryData(localLibrary, cloudWorks);
                     const mergedGamification = mergeGamificationData(
                         { ...localGamification, badges: localGamification.badges || [] },

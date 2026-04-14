@@ -1,7 +1,5 @@
 /**
  * Debounced sync of Zustand stores to Firestore
- * Handles library and gamification state
- * Ported from V2
  */
 import { useEffect, useState } from 'react';
 import { useShallow } from 'zustand/react/shallow';
@@ -38,7 +36,6 @@ export function useFirestoreSync() {
     bonusXp: s.bonusXp,
   })));
 
-  // Hydrate stores from profile changes (other devices, cloud functions)
   useEffect(() => {
     if (!user || userProfile === undefined) return;
     if (userProfile) {
@@ -47,7 +44,6 @@ export function useFirestoreSync() {
     }
   }, [userProfile, user]);
 
-  // Skip first save after initial sync to avoid write loop
   useEffect(() => {
     if (!user) return;
     if (isInitialSync.current) {
@@ -58,7 +54,6 @@ export function useFirestoreSync() {
     setShouldSaveGamification(true);
   }, [gamificationState, user]);
 
-  // Auto-save library (3s debounce)
   useEffect(() => {
     if (!user) return;
     const timeout = setTimeout(() => {
@@ -67,7 +62,6 @@ export function useFirestoreSync() {
     return () => clearTimeout(timeout);
   }, [libraryWorks, libraryFolders, user]);
 
-  // Auto-save gamification (3s debounce)
   useEffect(() => {
     if (!user || !shouldSaveGamification) return;
     const timeout = setTimeout(() => {

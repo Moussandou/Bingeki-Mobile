@@ -1,33 +1,24 @@
 /**
  * Social authentication hook
- * Handles Google and Discord login flows via Firebase, mirroring Bingeki-V2 auth patterns
+ * Handles Google, Discord, and Guest sign-in flows
  */
 import { useState, useEffect } from 'react';
-import * as WebBrowser from 'expo-web-browser';
+import { Alert } from 'react-native';
 import * as Google from 'expo-auth-session/providers/google';
 import { useAuthRequest, makeRedirectUri, ResponseType } from 'expo-auth-session';
 import { 
-    GoogleAuthProvider, 
-    signInAnonymously,
     signInWithCredential, 
+    GoogleAuthProvider, 
     OAuthProvider,
-    OAuthCredential
+    signInAnonymously 
 } from 'firebase/auth';
 import { auth } from '@/firebase/config';
-import { Alert } from 'react-native';
 
-WebBrowser.maybeCompleteAuthSession();
+const GOOGLE_WEB_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID;
+const GOOGLE_IOS_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID;
+const GOOGLE_ANDROID_CLIENT_ID = process.env.EXPO_PUBLIC_GOOGLE_ANDROID_CLIENT_ID;
+const DISCORD_CLIENT_ID = process.env.EXPO_PUBLIC_DISCORD_CLIENT_ID || '';
 
-// Client IDs from Firebase project (retrieved via MCP)
-// --- IDs de Client (À compléter depuis la console Google) ---
-const GOOGLE_WEB_CLIENT_ID = '1079885506084-u50lailu0jdgbm2h29cocoou764huksh.apps.googleusercontent.com';
-const GOOGLE_IOS_CLIENT_ID = '1079885506084-8ens2a69lvk1genpesai98ut8gdbrat5.apps.googleusercontent.com';
-// TODO: Créez un ID Android sur https://console.cloud.google.com/apis/credentials et mettez-le ici
-// En attendant, l'ID Web est utilisé comme secours pour éviter le crash "androidClientId must be defined"
-const GOOGLE_ANDROID_CLIENT_ID = GOOGLE_WEB_CLIENT_ID;
-
-// Discord OIDC (configuré comme 'oidc.discord' dans la console Firebase)
-const DISCORD_CLIENT_ID = '1327710830455595019';
 const DISCORD_DISCOVERY = {
     authorizationEndpoint: 'https://discord.com/oauth2/authorize',
     tokenEndpoint: 'https://discord.com/api/oauth2/token',
@@ -36,8 +27,6 @@ const DISCORD_DISCOVERY = {
 export function useSocialAuth() {
     const [loading, setLoading] = useState(false);
 
-    // --- Google Auth ---
-    // En projet "Production", Google bloque auth.expo.io. On passe en redirection directe.
     const [googleRequest, googleResponse, promptGoogleAsync] = Google.useAuthRequest({
         clientId: GOOGLE_WEB_CLIENT_ID,
         iosClientId: GOOGLE_IOS_CLIENT_ID,
@@ -51,9 +40,7 @@ export function useSocialAuth() {
     useEffect(() => {
         if (googleResponse?.type === 'success') {
             setLoading(true);
-            const { idToken, authentication } = googleResponse.params;
-            
-            // In a direct native flow, the token is often in the authentication object
+            const { idToken } = googleResponse.params;
             const token = idToken || googleResponse.authentication?.idToken;
 
             if (token) {
@@ -61,12 +48,12 @@ export function useSocialAuth() {
                 signInWithCredential(auth, credential)
                     .catch((error) => {
                         console.error('Google Firebase sign-in error:', error);
-                        Alert.alert('Erreur', 'Échec de la connexion Google.');
+                        Alert.alert('Error', 'Google sign-in failed.');
                     })
                     .finally(() => setLoading(false));
             } else {
-                console.error('No ID Token found in Google response. Response:', JSON.stringify(googleResponse));
-                Alert.alert('Erreur', 'Impossible de récupérer le jeton d\'identité Google.');
+                console.error('No ID Token found in Google response');
+                Alert.alert('Error', 'Unable to retrieve Google identity token.');
                 setLoading(false);
             }
         }
@@ -77,13 +64,11 @@ export function useSocialAuth() {
             await promptGoogleAsync();
         } catch (error) {
             console.error('Google prompt error:', error);
-            Alert.alert('Erreur', 'Impossible d\'ouvrir la page de connexion Google.');
+            Alert.alert('Error', 'Could not open Google login page.');
         }
     };
 
-    // --- Discord Auth ---
     const redirectUri = makeRedirectUri({ scheme: 'bingekimobile' });
-
     const [discordRequest, discordResponse, promptDiscordAsync] = useAuthRequest(
         {
             clientId: DISCORD_CLIENT_ID,
@@ -98,18 +83,22 @@ export function useSocialAuth() {
         if (discordResponse?.type === 'success') {
             setLoading(true);
             const { code } = discordResponse.params;
-            // For OIDC Discord, we use the OAuthProvider with the authorization code
-            // The Firebase OIDC provider 'oidc.discord' handles the token exchange
-            const provider = new OAuthProvider('oidc.discord');
-            const credential = provider.credential({
-                idToken: code, // Firebase OIDC will handle the exchange
-            });
-            signInWithCredential(auth, credential)
-                .catch((error) => {
-                    console.error('Discord Firebase sign-in error:', error);
-                    Alert.alert('Erreur', 'Échec de la connexion Discord. Vérifiez la configuration OIDC.');
-                })
-                .finally(() => setLoading(false));
+            
+            if (code) {
+                const provider = new OAuthProvider('oidc.discord');
+                const credential = provider.credential({
+                    idToken: code,
+                });
+                signInWithCredential(auth, credential)
+                    .catch((error) => {
+                        console.error('Discord Firebase sign-in error:', error);
+                        Alert.alert('Error', 'Discord sign-in failed.');
+                    })
+                    .finally(() => setLoading(false));
+            } else {
+                setLoading(false);
+                Alert.alert('Error', 'No authorization code received from Discord.');
+            }
         }
     }, [discordResponse]);
 
@@ -118,7 +107,7 @@ export function useSocialAuth() {
             await promptDiscordAsync();
         } catch (error) {
             console.error('Discord prompt error:', error);
-            Alert.alert('Erreur', 'Impossible d\'ouvrir la page de connexion Discord.');
+            Alert.alert('Error', 'Could not open Discord login page.');
         }
     };
 
@@ -128,7 +117,7 @@ export function useSocialAuth() {
             await signInAnonymously(auth);
         } catch (error) {
             console.error('Guest sign-in error:', error);
-            Alert.alert('Erreur', 'Impossible de se connecter en mode invité.');
+            Alert.alert('Error', 'Could not sign in as guest.');
         } finally {
             setLoading(false);
         }

@@ -1,5 +1,5 @@
 /**
- * API Service for Mobile
+ * API Service
  * Wraps Firebase Cloud Functions to fetch anime/manga data
  */
 import { searchWorksFn, getTopWorksFn, getSeasonalAnimeFn, getWorkDetailsFn, getAnimeEpisodesFn } from '@/firebase/functions';
