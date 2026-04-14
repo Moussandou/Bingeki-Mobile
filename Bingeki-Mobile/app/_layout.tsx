@@ -25,8 +25,8 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
-  const { authLoading } = useAuthStore();
-  
+  const { user } = useAuthStore();
+
   useAuthSync();
   useFirestoreSync();
 
