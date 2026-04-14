@@ -11,7 +11,7 @@ import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function AuthLayout() {
   return (
-    <Stack>
+    <Stack screenOptions={{ contentStyle: { backgroundColor: 'transparent' } }}>
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="register" options={{ headerShown: false }} />
     </Stack>

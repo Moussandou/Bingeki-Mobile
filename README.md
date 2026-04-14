@@ -70,18 +70,16 @@
 ## 📂 Project Structure
 
 ```text
-├── app/               # Expo Router pages (File-based routing)
-│   ├── (auth)/        # Authentication screens (Login/Register)
-│   ├── (tabs)/        # Main application tabs (Home, Discover, Library)
-│   └── details/       # Anime/Manga detail screens
-├── components/        # Reusable UI components
-│   ├── layout/        # Branding, Headers, and Backgrounds
-│   └── ui/            # Brutalist component system (Buttons, Cards, Views)
-├── constants/         # Theme tokens and global constants
-├── hooks/             # Custom React hooks
-├── services/          # API and Firebase integrations
-├── store/             # Zustand state management
-└── utils/             # Helper functions and logic
+.
+├── app/            # Expo Router pages
+├── components/     # UI components
+├── constants/      # Theme tokens
+├── hooks/          # Custom hooks
+├── services/       # API & Firebase
+├── store/          # Zustand state
+├── utils/          # Helpers
+├── docs/           # Project documentation
+└── CAHIER_DES_CHARGES_MOBILE.md  # Detailed specifications
 ```
 
 ---

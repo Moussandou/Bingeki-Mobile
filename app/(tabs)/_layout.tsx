@@ -24,7 +24,8 @@ export default function TabLayout() {
           tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
           headerShown: false,
           tabBarButton: HapticTab,
-        }}>
+        }}
+        sceneContainerStyle={{ backgroundColor: 'transparent' }}>
         <Tabs.Screen
           name="index"
           options={{
