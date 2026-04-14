@@ -113,5 +113,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ---
 
 <p align="center">
-  Built with ❤️ for the Otaku community by <b>Moussandou</b>
+  Built with ❤️ by <b>Moussandou</b>
 </p>
