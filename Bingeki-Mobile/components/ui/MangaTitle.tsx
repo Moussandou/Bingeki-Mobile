@@ -1,3 +1,7 @@
+/**
+ * MangaTitle component
+ * Bold rotated label — always red (#FF2E63) with white text and brutal 3×3 shadow
+ */
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle, TextStyle } from 'react-native';
 import { Fonts } from '@/constants/theme';
@@ -46,7 +50,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 3, height: 3 },
     shadowOpacity: 1,
     shadowRadius: 0,
-    elevation: 4,
+    elevation: 0,
   },
   rotated: {
     transform: [{ rotate: '-1deg' }],
